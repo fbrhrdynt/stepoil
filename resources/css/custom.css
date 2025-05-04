@@ -1,0 +1,100 @@
+
+.custom-input {
+    background-color: #ffffff  !important; /* Light gray */
+    border: 1px solid #d1d5db  !important; /* Tailwind's gray-300 */
+    padding: 10px 12px  !important;
+    border-radius: 0.5rem  !important; /* Rounded corners */
+    width: 100%  !important;
+    font-size: 0.875rem  !important; /* text-sm */
+    line-height: 1.25rem  !important;
+    transition: border-color 0.2s, box-shadow 0.2s  !important;
+}
+
+.custom-input:focus {
+    outline: none  !important;
+    border-color: #267544  !important; /* blue-500 */
+    box-shadow: 0 0 0 3px #267544  !important; /* Focus ring */
+}
+.custom-btn-submit {
+    background-color: #267544  !important; /* blue-600 */
+    color: white  !important;
+    padding: 0.5rem 1.25rem  !important;
+    border-radius: 0.5rem  !important;
+    font-weight: 500  !important;
+    transition: background-color 0.2s ease  !important;
+    display: inline-flex  !important;
+    align-items: center  !important;
+    gap: 0.5rem  !important;
+}
+
+.custom-btn-submit:hover {
+    background-color: #164729  !important; /* blue-700 */
+}
+
+.custom-btn-cancel {
+    color: #374151  !important; /* gray-700 */
+    padding: 0.5rem 1.25rem  !important;
+    border-radius: 0.5rem  !important;
+    font-weight: 500  !important;
+    background-color: #f3f4f6  !important; /* light bg */
+    text-decoration: none  !important;
+    display: inline-flex  !important;
+    align-items: center  !important;
+    gap: 0.5rem  !important;
+    transition: background 0.2s ease  !important;
+}
+
+.custom-btn-cancel:hover {
+    background-color: #e5e7eb  !important; /* gray-200 */
+    color: #111827  !important; /* darker text */
+}
+
+#datatable th,
+#datatable td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+}
+
+
+input.custom-input[readonly] {
+    background-color: #c1c1c1 !important;
+    color: #000000;
+}
+
+[x-cloak] { display: none !important; }
+
+.btn-view {
+    background-color: #267544;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s ease;
+}
+.btn-view:hover {
+    background-color: #1c5c34;
+}
+
+.btn-update {
+    background-color: #F59E0B;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s ease;
+}
+.btn-update:hover {
+    background-color: #D97706;
+}
+
+.btn-upload {
+    background-color: #10B981;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s ease;
+}
+.btn-upload:hover {
+    background-color: #059669;
+}
