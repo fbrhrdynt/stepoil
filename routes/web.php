@@ -136,4 +136,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/inspection-data', [InspectionDetailController::class, 'dataIndex'])->name('inspection.data.index');
     Route::get('/inspection-data/list', [InspectionDetailController::class, 'getAllData'])->name('inspection.data.list');
     
+    Route::get('/preventive-category', [PmDetailCategoryController::class, 'index'])->name('preventive.maintenance.index');
+    Route::get('/preventive-maintenance/data', [PmDetailCategoryController::class, 'getData'])->name('preventive.maintenance.data');
+
+    Route::get('/preventive-maintenance', [App\Http\Controllers\PmCategoryController::class, 'maintenanceView'])->name('preventive.maintenance');
+
+
 });

@@ -299,6 +299,35 @@ $user = auth()->user();
             </ul>
         @endif
 
+        @if (Request::is('preventive*'))
+            <ul class="TVHgSaRh3muGJct_epr9">
+                {{-- Preventive Maintenance Card --}}
+                <li>
+                    <a href="{{ url('preventive-maintenance') }}"
+                      class="BpcA_ZTX79XDgSc71n2v YRrCJSr_j5nopfm4duUc Q_jg_EPdNf9eDMn1mLI2 mveJTCIb2WII7J4sY22F FJRldeiG2gFGZfuKgp88 d3C8uAdJKNl1jzfE9ynq ezMFUVl744lvw6ht0lFe __9sbu0yrzdhGIkLWNXl _7KA5gD55t2lxf9Jkj20 OyABRrnTV_kvHV7dJ0uE OPrb_iG5WDy_7F05BDOX">
+                      <i class="fa-regular fa-file"></i>
+                        <span class="oA7zcT_42jVeFuWTXQnq">PM Files</span>
+                    </a>
+                </li>
+                {{-- PM Categories --}}
+                <li>
+                    <a href="{{ url('preventive-category') }}"
+                      class="BpcA_ZTX79XDgSc71n2v YRrCJSr_j5nopfm4duUc Q_jg_EPdNf9eDMn1mLI2 mveJTCIb2WII7J4sY22F FJRldeiG2gFGZfuKgp88 d3C8uAdJKNl1jzfE9ynq ezMFUVl744lvw6ht0lFe __9sbu0yrzdhGIkLWNXl _7KA5gD55t2lxf9Jkj20 OyABRrnTV_kvHV7dJ0uE OPrb_iG5WDy_7F05BDOX">
+                      <i class="fa-regular fa-object-ungroup"></i>
+                        <span class="oA7zcT_42jVeFuWTXQnq">PM Category</span>
+                    </a>
+                </li>
+                {{-- PM Data --}}
+                <li>
+                    <a href="{{ url('preventive-data') }}"
+                      class="BpcA_ZTX79XDgSc71n2v YRrCJSr_j5nopfm4duUc Q_jg_EPdNf9eDMn1mLI2 mveJTCIb2WII7J4sY22F FJRldeiG2gFGZfuKgp88 d3C8uAdJKNl1jzfE9ynq ezMFUVl744lvw6ht0lFe __9sbu0yrzdhGIkLWNXl _7KA5gD55t2lxf9Jkj20 OyABRrnTV_kvHV7dJ0uE OPrb_iG5WDy_7F05BDOX">
+                      <i class="fa-regular fa-rectangle-list"></i>
+                        <span class="oA7zcT_42jVeFuWTXQnq">PM Data</span>
+                    </a>
+                </li>
+            </ul>
+        @endif
+
 
         
 

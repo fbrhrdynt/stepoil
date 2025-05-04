@@ -57,4 +57,10 @@ class PmCategoryController extends Controller
         return redirect()->route('pm.index')->with('success', 'Category deleted successfully.');
     }
     
+    public function maintenanceView()
+    {
+        $categories = \App\Models\PmCategory::with(['data'])->get();
+        return view('pages.pm.card', compact('categories'));
+    }
+    
 }

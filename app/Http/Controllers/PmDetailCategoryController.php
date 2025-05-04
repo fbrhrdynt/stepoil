@@ -3,62 +3,72 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\PmDetailCategory;
+use Illuminate\Support\Facades\Response;
 
 class PmDetailCategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $categories = PmDetailCategory::all();
+        return view('pages.pm.category', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function getData()
     {
-        //
+        $data = PmDetailCategory::all();
+
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'pm_name' => 'required|string|max:255',
+            'frequency' => 'required|numeric|min:1',
+            'frequency_unit' => 'required|in:Day,Week,Month,Year',
+            'notes' => 'nullable|string',
+        ]);
+    
+        PmDetailCategory::create($request->all());
+    
+        return response()->json(['message' => 'Category saved']);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $data = \App\Models\PmDetailCategory::find($id);
+
+        if (!$data) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+
+        return response()->json($data);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        \Log::info('--- UPDATE CALLED ---');
+        \Log::info('Incoming ID: ' . $id);
+        \Log::info($request->all());
+    
+        $category = PmDetailCategory::findOrFail($id);
+        $category->update($request->only(['pm_name', 'frequency', 'frequency_unit', 'notes']));
+    
+        return response()->json(['message' => 'Category updated']);
     }
+    
+    public function destroy($id)
+    {
+        $category = PmDetailCategory::findOrFail($id);
+        $category->delete();
+    
+        return response()->json(['message' => 'Category deleted']);
+    }
+        
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+        
 }
