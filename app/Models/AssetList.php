@@ -29,5 +29,10 @@ class AssetList extends Model
     {
         return $this->hasMany(\App\Models\InspectionDetail::class, 'id_asset_list');
     }
+    public function pm_details()
+    {
+        return $this->hasMany(\App\Models\PmDetail::class, 'id_asset_list');
+    }
+
 
 }

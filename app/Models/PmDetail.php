@@ -24,7 +24,7 @@ class PmDetail extends Model
     public function pmCategory()
     {
         return $this->belongsTo(PmDetailCategory::class, 'id_pm_detail_category');
-    }
+    }    
 
     public function asset()
     {

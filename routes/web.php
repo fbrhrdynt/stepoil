@@ -28,6 +28,7 @@ use App\Models\RetortWorksheet;
 Route::get('/login', [AccountController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AccountController::class, 'login'])->name('login.attempt');
 Route::post('/logout', [AccountController::class, 'logout'])->name('logout');
+Route::get('/assets/select', [AssetListController::class, 'select'])->name('assets.select');
 
 // Route yang membutuhkan login
 Route::middleware('auth')->group(function () {
@@ -127,6 +128,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('pm-category', PmDetailCategoryController::class);
     Route::resource('inspection-category', InspectionCategoryController::class);
+    Route::get('/pm-detail-categories/select', [PmDetailCategoryController::class, 'select'])->name('pm-detail-category.select');
 
     Route::get('/assets/{asset}/pm/{pmDetail}', [PmDetailController::class, 'showPmByAsset'])->name('pmdetail.byasset');
     // Tampilkan semua inspection category untuk 1 asset
@@ -141,5 +143,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/preventive-maintenance', [App\Http\Controllers\PmCategoryController::class, 'maintenanceView'])->name('preventive.maintenance');
 
+    Route::get('/preventive-data', [PmDetailController::class, 'index'])->name('preventive.data');
+    Route::get('/preventive-data/list', [PmDetailController::class, 'getList'])->name('preventive.data.list');
+    Route::post('/preventive-data/store', [PmDetailController::class, 'store'])->name('preventive.data.store');
+    Route::get('/preventive-data/{id}/edit', [PmDetailController::class, 'edit'])->name('preventive.data.edit');
+    Route::put('/preventive-data/{id}', [PmDetailController::class, 'update'])->name('preventive.data.update');
+    Route::delete('/preventive-data/{id}', [PmDetailController::class, 'destroy'])->name('preventive.data.delete');
+    Route::get('/assets/{id}/pm', [AssetListController::class, 'getPmDetails'])->name('assets.pm');
+    
 
 });

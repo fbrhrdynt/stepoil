@@ -1,6 +1,27 @@
 @extends('layouts.app')
 @section('title', 'Asset List | FOTrack')
 @section('content')
+@push('styles')
+<style>
+    #assetTable,
+    #assetTable th,
+    #assetTable td {
+        font-size: 0.85rem !important; /* kecilkan ukuran font */
+    }
+
+    #assetTable th {
+        font-weight: 600;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        font-size: 0.8rem !important; /* kecilkan pagination, filter, dll */
+    }
+</style>
+@endpush
+
 <meta name="app-url" content="{{ url('/') }}">
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
@@ -24,6 +45,7 @@
                     <th>Status</th>
                     <th>COC</th>
                     <th>Inspection</th>
+                    <th>PM</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -174,6 +196,29 @@
     </div>
 </div>
 
+<!-- Modal PM -->
+<div id="modalPm" class="hidden fixed z-10 inset-0 overflow-y-auto bg-gray-700 bg-opacity-50">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white rounded-lg p-6 w-screen max-w-screen-xl shadow-lg overflow-x-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="pmModalTitle" class="text-lg font-semibold">
+                    <!-- Dynamic title here -->
+                </h2>
+                <button onclick="closePmModal()" class="text-gray-600 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+
+            <div class="overflow-x-auto mb-6 flex justify-center">
+            <table class="w-full border text-sm">
+                <thead class="bg-gray-100">
+                    <tr id="pmTableHeader"></tr>
+                </thead>
+                <tbody id="pmTableBody"></tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 
@@ -228,6 +273,15 @@ $(document).ready(function () {
             title: 'Inspection',
             render: function (data, type, row) {
                 return `<button onclick="showInspectionModal(${row.id})" class="text-blue-600">View</button>`;
+            },
+            orderable: false,
+            searchable: false
+        },
+        {
+            data: null,
+            title: 'PM',
+            render: function (data, type, row) {
+                return `<button onclick="showPmModal(${row.id})" class="text-green-600 hover:underline">View</button>`;
             },
             orderable: false,
             searchable: false
@@ -492,6 +546,67 @@ function cancelInspectionUpload() {
 
     document.getElementById('formAssetId').value = '';
     document.getElementById('formInspectionId').value = '';
+}
+
+function showPmModal(assetId) {
+    const modal = document.getElementById('modalPm');
+    const headerRow = document.getElementById('pmTableHeader');
+    const bodyContainer = document.getElementById('pmTableBody');
+    const baseUrl = document.querySelector('meta[name="app-url"]').getAttribute('content');
+    const title = document.getElementById('pmModalTitle');
+
+    headerRow.innerHTML = '';
+    bodyContainer.innerHTML = '';
+
+    $.get(`${baseUrl}/assets/${assetId}/pm`, function (asset) {
+        title.textContent = `Preventive Maintenance for ${asset.asset_name} (${asset.company_asset})`;
+
+        // Set header
+        headerRow.innerHTML = `
+            <th class="px-4 py-2 border text-left">Category</th>
+            <th class="px-4 py-2 border text-left">Start</th>
+            <th class="px-4 py-2 border text-left">Due</th>
+            <th class="px-4 py-2 border text-left">Status</th>
+            <th class="px-4 py-2 border text-left">Performed By</th>
+            <th class="px-4 py-2 border text-left">Notes</th>
+        `;
+
+        const pmList = asset.pm_details || [];
+
+        if (pmList.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="6" class="text-center py-4 text-gray-500">No records found</td>`;
+            bodyContainer.appendChild(row);
+        } else {
+            pmList.forEach(pm => {
+                const row = document.createElement('tr');
+                const category = pm.pm_category?.pm_name || '-';
+                const start = formatDateToLong(pm.pm_start);
+                const due = formatDateToLong(pm.pm_due);
+                const status = pm.pm_status || '-';
+                const by = pm.performed_by || '-';
+                const notes = pm.notes || '-';
+
+                row.innerHTML = `
+                    <td class="px-4 py-2 border">${category}</td>
+                    <td class="px-4 py-2 border">${start}</td>
+                    <td class="px-4 py-2 border">${due}</td>
+                    <td class="px-4 py-2 border">${status}</td>
+                    <td class="px-4 py-2 border">${by}</td>
+                    <td class="px-4 py-2 border">${notes}</td>
+                `;
+                bodyContainer.appendChild(row);
+            });
+        }
+
+        modal.classList.remove('hidden');
+    });
+}
+
+
+function closePmModal() {
+    const modal = document.getElementById('modalPm');
+    modal.classList.add('hidden');
 }
 
 

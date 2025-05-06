@@ -22,6 +22,11 @@ class PmDetailCategoryController extends Controller
             'data' => $data
         ]);
     }
+    
+    public function select()
+    {
+        return \App\Models\PmDetailCategory::select('id', 'pm_name', 'frequency', 'frequency_unit')->get();
+    }
 
     public function store(Request $request)
     {
@@ -59,7 +64,7 @@ class PmDetailCategoryController extends Controller
     
         return response()->json(['message' => 'Category updated']);
     }
-    
+
     public function destroy($id)
     {
         $category = PmDetailCategory::findOrFail($id);

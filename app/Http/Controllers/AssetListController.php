@@ -15,8 +15,7 @@ class AssetListController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $assets = \App\Models\AssetList::all();
-            
+            $assets = \App\Models\AssetList::with(['pm_details.pmCategory', 'inspectionDetails'])->get();
     
             return response()->json([
                 'data' => $assets
@@ -24,9 +23,27 @@ class AssetListController extends Controller
         }
     
         return view('pages.assets.index');
-    }
+    }    
      
+    public function select(Request $request)
+    {
+        $search = $request->q;
     
+        $assets = \App\Models\AssetList::query()
+            ->when($search, fn($q) => $q->where('asset_name', 'like', "%{$search}%")
+                                        ->orWhere('company_asset', 'like', "%{$search}%"))
+            ->select('id', 'asset_name', 'company_asset')
+            ->limit(10)
+            ->get();
+    
+        return response()->json($assets);
+    }     
+
+    public function getPmDetails($id)
+    {
+        $asset = \App\Models\AssetList::with('pm_details.pmCategory')->findOrFail($id);
+        return response()->json($asset);
+    }
     
     public function store(Request $request)
     {
@@ -57,7 +74,6 @@ class AssetListController extends Controller
         }
     }
     
-
     public function show($id)
     {
         $asset = AssetList::with('inspectionDetails')->findOrFail($id);

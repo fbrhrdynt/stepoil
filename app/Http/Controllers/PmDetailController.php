@@ -3,62 +3,71 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\PmDetail;
+use Carbon\Carbon;
 
 class PmDetailController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Tampilkan halaman DataTable
     public function index()
     {
-        //
+        return view('pages.pm.all-data');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // API untuk DataTables
+    public function getList()
     {
-        //
+        $data = PmDetail::with(['pmCategory', 'asset'])->get()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'category' => optional($item->pmCategory)->pm_name,
+                'asset' => optional($item->asset)->company_asset, // 👈 pakai company_asset
+                'pm_start' => \Carbon\Carbon::parse($item->pm_start)->format('M d, Y'),
+                'pm_due' => \Carbon\Carbon::parse($item->pm_due)->format('M d, Y'),
+                'pm_status' => $item->pm_status,
+                'performed_by' => $item->performed_by,
+            ];
+        });
+    
+        return response()->json(['data' => $data]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'id_pm_detail_category' => 'required|exists:pm_detail_category,id',
+            'id_asset_list' => 'required|exists:assets_list,id',
+            'pm_start' => 'required|date',
+            'pm_due' => 'required|date',
+            'pm_status' => 'required|string',
+            'performed_by' => 'required|string',
+            'notes' => 'nullable|string'
+        ]);
+    
+        PmDetail::create($request->all());
+    
+        return response()->json(['success' => true]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        $pm = PmDetail::with('asset', 'pmCategory')->findOrFail($id);
+        return response()->json($pm);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    
+    public function update(Request $request, $id)
     {
-        //
+        $pm = PmDetail::findOrFail($id);
+        $pm->update($request->all());
+        return response()->json(['message' => 'Updated successfully']);
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    
+    public function destroy($id)
     {
-        //
+        $pm = PmDetail::findOrFail($id);
+        $pm->delete();
+        return response()->json(['message' => 'Deleted successfully']);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    
+    
 }
