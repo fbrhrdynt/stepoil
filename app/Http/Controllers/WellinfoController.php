@@ -13,7 +13,8 @@ use App\Models\Desanders;
 use App\Models\Desilters;
 use App\Models\RetortWorksheet;
 use Yajra\DataTables\Facades\DataTables;
-
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\WellSummaryExport;
 
 class WellinfoController extends Controller
 {
@@ -472,8 +473,9 @@ class WellinfoController extends Controller
         }
     }
     
-    
-    
-
+    public function downloadSummary($projectId)
+    {
+        return Excel::download(new WellSummaryExport($projectId), 'Well Summary.xlsx');
+    }
     
 }

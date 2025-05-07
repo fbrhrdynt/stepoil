@@ -21,4 +21,10 @@ class Project extends Model
         'wellname', 
         'kodeakses'
     ];
+    
+    public function wellinfos()
+    {
+        return $this->hasMany(Wellinfo::class, 'id_project', 'id_project');
+    }
+
 }

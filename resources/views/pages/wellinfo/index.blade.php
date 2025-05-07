@@ -14,6 +14,11 @@
                         $last = $wellinfo->sortByDesc('urut')->first();
                     @endphp
 
+                    <a href="javascript:void(0);" onclick="confirmDownloadSummary('{{ route('wellinfo.downloadSummary', $project->id_project) }}')"
+                        class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 ml-2">
+                        <i class="fa-regular fa-file-excel"></i> &nbsp;Download Current Well Summary
+                    </a>
+
                     <a href="javascript:void(0);" onclick="confirmCopyWithProject('{{ route('wellinfo.copyWithProject', [$project->id_project, $last->id_wellinfo]) }}')"
                         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                         <i class="fa-regular fa-copy"></i> &nbsp;Create New Report with Latest Data
@@ -30,6 +35,22 @@
                                 confirmButtonColor: '#2563eb',
                                 cancelButtonColor: '#d33',
                                 confirmButtonText: 'Yes, copy it!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = url;
+                                }
+                            });
+                        }
+                        
+                        function confirmDownloadSummary(url) {
+                            Swal.fire({
+                                title: 'Download Current Well Summary?',
+                                text: 'This will download the current well summary as an Excel file.',
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonColor: '#2563eb',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, download it!'
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     window.location.href = url;

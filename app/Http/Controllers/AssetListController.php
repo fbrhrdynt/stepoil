@@ -64,7 +64,7 @@ class AssetListController extends Controller
         if ($request->hasFile('coc')) {
             $file = $request->file('coc');
             $ext = $file->getClientOriginalExtension();
-            $fileName = "{$asset->id}-{$asset->mfg_sn}.{$ext}";
+            $fileName = "{$asset->id}-{$asset->company_asset}.{$ext}";
     
             // Simpan ke public disk
             $path = $file->storeAs('coc_files', $fileName, 'public');
@@ -98,16 +98,21 @@ class AssetListController extends Controller
     
         if ($request->hasFile('coc')) {
             // Hapus file lama jika ada
-            if ($asset->coc && \Storage::disk('public')->exists($asset->coc)) {
-                \Storage::disk('public')->delete($asset->coc);
+            if ($asset->coc && Storage::disk('public')->exists($asset->coc)) {
+                Storage::disk('public')->delete($asset->coc);
             }
         
             $file = $request->file('coc');
             $ext = $file->getClientOriginalExtension();
-            $filename = "{$asset->id}-{$asset->mfg_sn}-" . time() . ".{$ext}";
-            $path = $file->storeAs('public/coc_files', $filename);
-            $asset->update(['coc' => str_replace('public/', '', $path)]);
-        }        
+            $filename = "{$asset->id}-{$asset->company_asset}.{$ext}";
+        
+            // Simpan file baru
+            $path = $file->storeAs('coc_files', $filename, 'public');
+        
+            // Simpan path ke DB tanpa awalan 'public/'
+            $asset->update(['coc' => $path]);
+        }
+            
     
         return response()->json([
             'message' => 'Asset updated successfully.',

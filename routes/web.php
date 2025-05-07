@@ -150,6 +150,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/preventive-data/{id}', [PmDetailController::class, 'update'])->name('preventive.data.update');
     Route::delete('/preventive-data/{id}', [PmDetailController::class, 'destroy'])->name('preventive.data.delete');
     Route::get('/assets/{id}/pm', [AssetListController::class, 'getPmDetails'])->name('assets.pm');
-    
+    Route::get('/wellinfo/download-summary/{project_id}', [WellinfoController::class, 'downloadSummary'])->name('wellinfo.downloadSummary');    
 
 });
