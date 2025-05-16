@@ -49,9 +49,9 @@ return new class extends Migration {
                 $table->string("sh{$i}_model", 200)->nullable();
                 $table->string("sh{$i}_screensize", 255)->nullable();
                 $table->string("sh{$i}_runninghour", 10)->nullable();
-                $table->string("screens_changed", 200)->nullable();
             }
 
+            $table->string("screens_changed", 200)->nullable();
             // Centrifuge
             for ($i = 1; $i <= 3; $i++) {
                 $table->string("cf{$i}_sn", 20)->nullable();

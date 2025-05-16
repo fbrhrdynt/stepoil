@@ -24,6 +24,10 @@ use App\Http\Controllers\InspectionDetailController;
 use App\Models\Project;
 use App\Models\RetortWorksheet;
 
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 // Route bebas login
 Route::get('/login', [AccountController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AccountController::class, 'login'])->name('login.attempt');

@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('inspection_detail', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_inspection')->constrained('inspection_category')->onDelete('cascade');
+            $table->unsignedBigInteger('id_inspection');
+            $table->foreign('id_inspection')->references('id_inspection')->on('inspection_category')->onDelete('cascade');      
             $table->foreignId('id_asset_list')->constrained('assets_list')->onDelete('cascade');
             $table->date('inspection_date')->nullable();
             $table->date('inspection_exp')->nullable();
