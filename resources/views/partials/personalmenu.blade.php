@@ -41,44 +41,7 @@ $user = auth()->user();
           </a>
         </div>
         <div class="hD0sTTDgbxakubcHVW2X t6gkcSf0Bt4MLItXvDJ_ eF0P64ujeMO7U0MvrZ94 tu2pET5XXEFdLYbAVwZL _9igzqn_6D3Qq5Hcwkfk _fGhMnSfYmaGrv7DvZ00">
-          <ul class="xCPtuxM4_gihvpPwv9bX VWCEsSASYzme_Objbtiq _5Tr_VpHPDHkr3MEHnD3">
-            <li>
-                <a href="#" class="flex flex-col items-center justify-center space-y-2 p-4 bg-green-100 rounded-xl hover:bg-green-200 transition w-17 h-19">
-                    <!-- Lingkaran latar belakang ikon -->
-                    <span class="flex items-center justify-center w-10 h-10 bg-green-200 rounded-full">
-                        <!-- Ikon Profile -->
-                        <svg class="w-5 h-5 text-green-700" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="square" stroke-linejoin="round" stroke-width="2" 
-                                d="M10 19H5a1 1 0 0 1-1-1v-1a3 3 0 0 1 3-3h2m10 1a3 3 0 0 1-3 3m3-3a3 3 0 0 0-3-3m3 3h1m-4 3a3 3 0 0 1-3-3m3 3v1m-3-4a3 3 0 0 1 3-3m-3 3h-1m4-3v-1m-2.121 1.879-.707-.707m5.656 5.656-.707-.707m-4.242 0-.707.707m5.656-5.656-.707.707M12 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z">
-                            </path>
-                        </svg>
-                    </span>
-                    <!-- Teks Profile -->
-                    <span class="text-green-700 font-medium text-sm">Profile</span>
-                </a>
-            </li>
-            
-            <li>
-              <a href="#" class="BpcA_ZTX79XDgSc71n2v YRrCJSr_j5nopfm4duUc e8VqoQNK0mbkRFDL3LMV Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU RoDfxj64vTei9ck9_udt dG3oBJeXmYiPvv95_5Av olxDi3yL6f0gpdsOFDhx CkJvWmSzrczMFYV5nkAF a0oEzk8_ILhkMVanM4oU _B8BhWO3t_z9sGHLd_j1">
-                <span class="Z3N7I2IDDsoXK6xJ1cSW YRrCJSr_j5nopfm4duUc mWvJQyBFgwNGEt0h7bSP yNvZ2JlUalNo5uPPv1sf Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU RpVwy4sO7Asb86CncKJ_ k1sFscPcBz_oMeiTaKv8 RQsKaUR_n7gJ2xQ1w2Cj yfoFb8TiTLpeijRDgWb4 ZtHunF4MCt1FNmX0K1xi">
-                  <svg class="rxe6apEJoEk8r75xaVNG ADSeKHR1DvUUA48Chci_ QhTQT3yHZYNt6QwCpkhf Ve5b1Uj_g0EE28J7Z_Ka" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21v-9m3-4H7.5a2.5 2.5 0 1 1 0-5c1.5 0 2.875 1.25 3.875 2.5M14 21v-9m-9 0h14v8a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-8ZM4 8h16a1 1 0 0 1 1 1v3H3V9a1 1 0 0 1 1-1Zm12.155-5c-3 0-5.5 5-5.5 5h5.5a2.5 2.5 0 0 0 0-5Z"></path>
-                  </svg>
-                </span>
-                <span class="c8dCx6gnV43hTOLV6ks5 ezMFUVl744lvw6ht0lFe QhTQT3yHZYNt6QwCpkhf Ve5b1Uj_g0EE28J7Z_Ka">Gifts</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="BpcA_ZTX79XDgSc71n2v YRrCJSr_j5nopfm4duUc e8VqoQNK0mbkRFDL3LMV Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU RoDfxj64vTei9ck9_udt _KkbvaHP5zkiIuczEPC9 olxDi3yL6f0gpdsOFDhx nEXRqkz7_THgCYefx_SX Oc27dNswOmyH2Polegu2 Z605SWWVnnLWoG1iRZFW">
-                <span class="Z3N7I2IDDsoXK6xJ1cSW YRrCJSr_j5nopfm4duUc mWvJQyBFgwNGEt0h7bSP yNvZ2JlUalNo5uPPv1sf Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU RpVwy4sO7Asb86CncKJ_ YgzIA9Uy7BjAijZC6Z4_ wRAsXYL7m_1CugzFMJpk _GFTJoxijWwBlJT1h1Bn TJnGHuwFzAZrpgYWlFF8">
-                  <svg class="rxe6apEJoEk8r75xaVNG ADSeKHR1DvUUA48Chci_ a0iY_D_gRDQDCcmiirsS oMLtITDsAJLFJ47UFMxx" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8H5m12 0a1 1 0 0 1 1 1v2.6M17 8l-4-4M5 8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.6M5 8l4-4 4 4m6 4h-4a2 2 0 1 0 0 4h4a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1Z"></path>
-                  </svg>
-                </span>
-                <span class="c8dCx6gnV43hTOLV6ks5 ezMFUVl744lvw6ht0lFe a0iY_D_gRDQDCcmiirsS oMLtITDsAJLFJ47UFMxx">Wallet</span>
-              </a>
-            </li>
-          </ul>
+
         </div>
 
 
@@ -328,27 +291,8 @@ $user = auth()->user();
             </ul>
         @endif
 
-
-        
-
-
-        
-
-
-
-
-
-        
         <ul class="KC0h1uHEHnCjmnE_rg8g TVHgSaRh3muGJct_epr9 pVSXSlnJdgskzP7BxPBe tu2pET5XXEFdLYbAVwZL LVS5VhNiuUNp2iESGVfr _fGhMnSfYmaGrv7DvZ00">
-          <li>
-            <a href="#" class="BpcA_ZTX79XDgSc71n2v YRrCJSr_j5nopfm4duUc Q_jg_EPdNf9eDMn1mLI2 mveJTCIb2WII7J4sY22F FJRldeiG2gFGZfuKgp88 d3C8uAdJKNl1jzfE9ynq ezMFUVl744lvw6ht0lFe __9sbu0yrzdhGIkLWNXl _7KA5gD55t2lxf9Jkj20 OyABRrnTV_kvHV7dJ0uE OPrb_iG5WDy_7F05BDOX">
-              <svg class="MnxxlQlR1H0xJuMEE8Yr YIUegm7fh_CpJbivTu6B _JmTNv5EiHqK2A1jcQSf bcsWqjK52oeyT6oeC2Az gZ3KuFw1JESHhOJhjT8j _Oyukq8JlN1X9w2FmPds XIIs8ZOri3wm8Wnj9N_y Lld6j9B1iilEqA6j31e4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"></path>
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
-              </svg>
-              <span class="oA7zcT_42jVeFuWTXQnq _74lpPUMEtHf6F0_fjLe BHrWGjM1Iab_fAz0_91H">Settings</span>
-            </a>
-          </li>
+          
           <li>
             <form action="{{ route('logout') }}" method="POST" class="inline">
                 @csrf

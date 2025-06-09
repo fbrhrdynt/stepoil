@@ -29,13 +29,13 @@
 
 <body class="bg-gray-100">
     {{-- ✅ Layout Sections --}}
-    @include('partials.navbar')
     @include('partials.header')
     @include('partials.sidebar')
     @include('partials.personalmenu')
+    @include('partials.navbar')
 
     @yield('content')
-
+        <?php /*
         @if (session('success'))
             <div id="alertBox" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4 mx-4" role="alert">
                 <span class="block sm:inline">{!! session('success') !!}</span>
@@ -53,6 +53,7 @@
                 }, 5000);
             </script>
         @endif
+        */ ?>
 
     @include('partials.footer')
 

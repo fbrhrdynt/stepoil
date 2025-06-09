@@ -49,6 +49,11 @@
     color: #111827  !important; /* darker text */
 }
 
+.tab-active {
+    border-bottom: 2px solid #2563eb !important; /* Fallback paksa manual */
+    color: #2563eb !important; /* Warna teks biru paksa */
+}
+
 #datatable th,
 #datatable td {
     padding: 0.5rem 0.75rem;
@@ -98,3 +103,46 @@ input.custom-input[readonly] {
 .btn-upload:hover {
     background-color: #059669;
 }
+
+  /* Reset & basic */
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  /* Navbar */
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #222;
+    color: #eee;
+    padding: 0.5rem 1rem;
+    background-color: #f4f4f4;
+  }
+
+  .navbar .logo-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.5rem;
+  }
+
+  .navbar .logo-container img {
+    height: 32px;
+  }
+
+  .navbar .logo-container span {
+    font-weight: 600;
+    font-size: 1.1rem;
+    user-select: none;
+  }
+
+  /* Responsive */
+  @media (min-width: 768px) {
+    .sidebar-menu {
+      width: 300px;
+    }
+  }
+  

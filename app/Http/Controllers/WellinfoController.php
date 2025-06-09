@@ -84,15 +84,11 @@ class WellinfoController extends Controller
                                 <i class="fa-solid fa-lock-open"></i>
                             </a>';
                 
-                    $printBtn = '<a href="' . url('PrintDailyReport/' . $row->id_wellinfo) . '" target="_blank" class="text-green-600 hover:text-green-800 mr-2" title="Print">
-                                    <i class="fa fa-print"></i>
-                                </a>';
-                
                     $deleteBtn = '<a href="' . url('wellinfo/delete/' . $row->id_wellinfo) . '" onclick="return confirm(\'Are you sure to delete this report?\')" class="text-red-600 hover:text-red-800" title="Delete">
                                     <i class="fa fa-trash"></i>
                                 </a>';
                 
-                    return $viewBtn . $lockIcon . $printBtn . $deleteBtn;
+                    return $viewBtn . $lockIcon . $deleteBtn;
                 })
                 
                 ->rawColumns(['action'])
