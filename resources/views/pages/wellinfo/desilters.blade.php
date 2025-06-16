@@ -124,7 +124,8 @@ function updateUnit(fieldName) {
         unitEl.innerText = (value >= 8.33) ? 'ppg' : 'sp.gr';
     }
 }
-
+</script>
+<script>
 function submitDesilter() {
     const form = document.getElementById('formDesilters');
     const button = document.getElementById('saveDesilter');
@@ -159,20 +160,36 @@ function submitDesilter() {
 
     .then(data => {
         if (data.success) {
-            const confirmRedirect = confirm(
-                "Data has been successfully saved.\nClick OK to continue to Retort Worksheet Page, or Cancel to stay on this page."
-            );
-            if (confirmRedirect) {
-                window.location.href = "{{ url('projects/details/' . $project_id . '/' . $wellinfo_id . '/retort') }}";
-            } else {
-                location.reload();
-            }
+            const redirectUrl = "{{ url('projects/details/' . $project_id . '/' . $wellinfo_id . '/retort') }}";
+
+            Swal.fire({
+                title: 'Data Saved Successfully!',
+                text: 'Do you want to continue to the Retort Worksheet Page?',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, go to Retort',
+                cancelButtonText: 'Stay Here'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = redirectUrl;
+                } else {
+                    location.reload();
+                }
+            });
         } else {
-            alert("Failed: " + (data.error || "Unknown error."));
+            Swal.fire({
+                icon: 'error',
+                title: 'Save Failed',
+                text: data.error || "Unknown error."
+            });
         }
     })
     .catch(err => {
-        alert("Unexpected error:\n" + (err.message || JSON.stringify(err)));
+        Swal.fire({
+            icon: 'error',
+            title: 'Unexpected Error',
+            text: err.message || JSON.stringify(err)
+        });
     })
     .finally(() => {
         button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
@@ -180,4 +197,5 @@ function submitDesilter() {
     });
 }
 </script>
+
 @endsection

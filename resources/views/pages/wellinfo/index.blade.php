@@ -24,7 +24,6 @@
                         <i class="fa-regular fa-copy"></i> &nbsp;Create New Report with Latest Data
                     </a>
 
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                     <script>
                         function confirmCopyWithProject(url) {
                             Swal.fire({
@@ -107,6 +106,31 @@
             ]
         });
     });
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.body.addEventListener("click", function (e) {
+        if (e.target.closest(".delete-report-btn")) {
+            e.preventDefault();
+            const btn = e.target.closest(".delete-report-btn");
+            const url = btn.getAttribute("data-url");
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This report will be permanently deleted.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to delete URL
+                    window.location.href = url;
+                }
+            });
+        }
+    });
+});
 </script>
 
 

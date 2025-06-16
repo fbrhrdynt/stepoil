@@ -159,25 +159,28 @@
                                                     : 'class=form-control';
                                             @endphp
                                             <td>
-                                                @if ($fieldKey === 'sampletime')
-                                                    @php
-                                                        $formattedTime = '';
-                                                        if (!empty($value) && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $value)) {
-                                                            $formattedTime = \Carbon\Carbon::parse($value)->format('H:i');
-                                                        }
-                                                    @endphp
-                                                    <input type="time"
-                                                        name="{{ $name }}"
-                                                        id="{{ $name }}"
-                                                        value="{{ $formattedTime ?: '00:00' }}"
-                                                        class="form-control">
-                                                @else
-                                                    <input type="text"
-                                                        name="{{ $name }}"
-                                                        id="{{ $name }}"
-                                                        value="{{ $value }}"
-                                                        {!! $readonly !!}>
-                                                @endif
+                                            @if ($fieldKey === 'sampletime')
+                                                @php
+                                                    $formattedTime = '00:00';
+                                                    if (is_numeric($value)) {
+                                                        $hours = floor($value / 60);
+                                                        $minutes = $value % 60;
+                                                        $formattedTime = sprintf('%02d:%02d', $hours, $minutes);
+                                                    }
+                                                @endphp
+                                                <input type="time"
+                                                    name="{{ $name }}"
+                                                    id="{{ $name }}"
+                                                    value="{{ $formattedTime }}"
+                                                    class="form-control">
+                                            @else
+                                                <input type="text"
+                                                    name="{{ $name }}"
+                                                    id="{{ $name }}"
+                                                    value="{{ $value }}"
+                                                    {!! $readonly !!}>
+                                            @endif
+
                                             </td>
                                         @endforeach
                                     @endif

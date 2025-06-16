@@ -129,44 +129,56 @@
 
 @section('scripts')
 <script>
-    console.log("Active Mud Properties Script loaded"); // ini harus tampil di console
-
     function submitActiveMudProperties() {
-        console.log("Submit function triggered"); // ini harus muncul saat tombol diklik
+        console.log("Submit function triggered");
 
         const form = document.getElementById('formActiveMudProperties');
         const button = document.getElementById('saveMudProp');
 
+        button.disabled = true;
         button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
         fetch(form.action, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
             },
             body: new FormData(form)
         })
-        .then(res => {
-            if (!res.ok) throw new Error('HTTP error ' + res.status);
-            return res.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('Data saved successfully.');
-                location.reload();
-            } else {
-                alert(data.error || 'Failed to save.');
+        .then(async response => {
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 422 && data.errors) {
+                    const firstError = Object.values(data.errors)[0][0];
+                    throw new Error(firstError);
+                }
+                throw new Error(data.message || 'Failed to save data.');
             }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Saved!',
+                text: 'Active Mud Properties updated successfully.',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                location.reload();
+            });
         })
         .catch(error => {
-            console.error('Fetch error:', error);
-            alert('Something went wrong!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Something went wrong while saving data.',
+            });
         })
         .finally(() => {
-            button.innerHTML = '<i class="fa-solid fa-save"></i> Save Data';
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-solid fa-save"></i> &nbsp; Save Data';
         });
     }
 </script>
-
 @endsection
+
 

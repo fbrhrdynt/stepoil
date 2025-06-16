@@ -77,68 +77,83 @@
 
 @section('scripts')
 <script>
-function submitCDU1() {
-    const form = document.getElementById('formCDU1');
-    const button = document.getElementById('saveCDU1');
+    function submitCDU1() {
+        const form = document.getElementById('formCDU1');
+        const button = document.getElementById('saveCDU1');
 
-    button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-    button.disabled = true;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        button.disabled = true;
 
-    fetch(form.action, {
-        method: 'POST', // Form pakai @method('PUT') di blade
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-        },
-        body: new FormData(form)
-    })
-    .then(res => {
-        if (!res.ok) {
-            return res.json().then(err => { throw err; });
-        }
-        return res.json();
-    })
-    .then(data => {
-        if (data.success) {
-            handleRedirectToCDU2();
-        } else {
-            alert(data.error || "Saving failed.");
-        }
-    })
-    .catch(error => {
-        console.error('Fetch Error:', error);
-        alert("An unexpected error occurred:\n" + (error.message || JSON.stringify(error)));
-    })
-    .finally(() => {
-        button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
-        button.disabled = false;
-    });
-}
-
-
-function handleRedirectToCDU2() {
-    let seconds = 5;
-    const redirectUrl = "{{ url("projects/details/$project_id/{$wellinfo->id_wellinfo}/cdu-2") }}";
-
-    const interval = setInterval(() => {
-        if (seconds <= 0) {
-            clearInterval(interval);
-            window.location.href = redirectUrl;
-        }
-        seconds--;
-    }, 1000);
-
-    const confirmRedirect = confirm("Data has been successfully saved.\n\nYou will be redirected to Cutting Dryer 2 in 5 seconds.\n\nClick OK to go now, or Cancel to stay on this page.");
-
-    if (confirmRedirect) {
-        clearInterval(interval);
-        window.location.href = redirectUrl;
-    } else {
-        clearInterval(interval);
-        location.reload(); // refresh data baru
+        fetch(form.action, {
+            method: 'POST', // Jika pakai @method('PUT'), FormData tetap valid
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            },
+            body: new FormData(form)
+        })
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to save.');
+            if (data.success) {
+                handleRedirectToCDU2();
+            } else {
+                throw new Error(data.error || 'Saving failed.');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'An unexpected error occurred.',
+            });
+        })
+        .finally(() => {
+            button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
+            button.disabled = false;
+        });
     }
-}
+
+    function handleRedirectToCDU2() {
+        let seconds = 5;
+        const redirectUrl = "{{ url("projects/details/$project_id/{$wellinfo->id_wellinfo}/cdu-2") }}";
+
+        const timer = setInterval(() => {
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = redirectUrl;
+            }
+            seconds--;
+        }, 1000);
+
+        Swal.fire({
+            title: 'Data Saved!',
+            html: `You will be redirected to <b>Cutting Dryer 2</b> in <b><span id="countdown">5</span></b> seconds.<br><br>
+                Click <b>Go Now</b> to redirect immediately, or <b>Stay</b> to remain on this page.`,
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Go Now',
+            cancelButtonText: 'Stay Here',
+            didOpen: () => {
+                const content = Swal.getHtmlContainer();
+                const $countdown = content.querySelector('#countdown');
+                const countdownInterval = setInterval(() => {
+                    $countdown.textContent = seconds;
+                    if (seconds <= 0) clearInterval(countdownInterval);
+                }, 1000);
+            }
+        }).then((result) => {
+            clearInterval(timer);
+            if (result.isConfirmed) {
+                window.location.href = redirectUrl;
+            } else {
+                location.reload();
+            }
+        });
+    }
 </script>
+
 
 @endsection

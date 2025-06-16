@@ -23,7 +23,7 @@
     <div class="py-8">
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-semibold leading-tight">Manage Projects</h1>
-            <button id="createProductButton" data-modal-target="addProjectModal" data-modal-toggle="addProjectModal" type="button" class="YRrCJSr_j5nopfm4duUc t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU mveJTCIb2WII7J4sY22F g40_g3BQzYCOX5eZADgY _Cj_M6jt2eLjDgkBBNgI b9aD6g2qw84oyZNsMO8j c8dCx6gnV43hTOLV6ks5 ezMFUVl744lvw6ht0lFe y6GKdvUrd7vp_pxsFb57 YoPCmQ0E_V5W0GGmSIdm BkIbg_JwkgiyRW804Hhu _dylIDxYTN3qgvD4U597 KmgKPWh7pHX4ztLneO0T d8_fVOcgDmbt7UdpfeLK WuKugQzwTT7o1wwBck2R _ZsTMX_gz275093orLWM icxWjIgUd9_dzYucx1nx"><i class="fa-solid fa-plus"></i> Add New Project
+            <button id="createProductButton" data-modal-target="addProjectModal" data-modal-toggle="addProjectModal" type="button" class="custom-btn-submit"><i class="fa-solid fa-plus"></i> Add New Project
             </button>
         </div>
         <div class="overflow-x-auto">
@@ -127,7 +127,7 @@
             </div>
 
             <div class="Q_jg_EPdNf9eDMn1mLI2 UYOSZJ1_pv3B5nt1ujCP rvdRhGyExrNYTA6euxsF SQf297smyJVNzzOO3iQL xr7CqaTHxTvDOrwAH2SW">
-                <button type="submit" class="_k0lTW0vvzboctTxDi2R t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU bg-blue-700 hover:bg-blue-400 text-white font-semibold px-4 py-2 rounded-lg w-full"><i class="fa-solid fa-save"></i> &nbsp; Save Project
+                <button type="submit" class="_k0lTW0vvzboctTxDi2R t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU custom-btn-submit"><i class="fa-solid fa-save"></i> &nbsp; Save Project
                 </button>
 
                 <button data-modal-hide="addProjectModal" onclick="resetForm()"
@@ -170,96 +170,96 @@
                 { data: 'action', name: 'action', orderable: false, searchable: false },
             ]
         });
-
-        // AJAX submit form tambah project
-        const form = document.getElementById("addProjectForm");
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-            const submitBtn = form.querySelector("button[type='submit']");
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-
-            let url = form.action;
-            let method = "POST";
-
-            if (form.dataset.editId) {
-                url = `/projects/${form.dataset.editId}`;
-                method = "POST";
-                formData.append('_method', 'PUT');
-            }
-
-            fetch(url, {
-                method: method,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                },
-                body: formData
-            })
-
-            .then(async response => {
-                const isJson = response.headers.get("content-type")?.includes("application/json");
-                const data = isJson ? await response.json() : null;
-
-                if (!response.ok || !data || !data.success) {
-                    throw new Error(data?.message || "Failed to save project.");
-                }
-
-                // Reset form
-                form.reset();
-                document.getElementById('logo-preview')?.classList.add('hidden');
-
-                // Close modal
-                const modalCloseBtn = document.querySelector('[data-modal-toggle="addProjectModal"]');
-                if (modalCloseBtn) modalCloseBtn.click();
-
-                // Show success toast
-                showAlert(data.message || "Project has been added successfully!", 'green');
-
-                // Reload DataTable
-                $('#datatable').DataTable().ajax.reload(null, false);
-            })
-            .catch(error => {
-                console.error("AJAX ERROR:", error);
-                showAlert("An error occurred while saving the project. " + error.message, 'red');
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> &nbsp; Save Project';
-            });
-        });
     });
 </script>
 
+<script>
+const form = document.getElementById("addProjectForm");
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+    let url = form.action;
+    let method = "POST";
+
+    if (form.dataset.editId) {
+        url = `/projects/${form.dataset.editId}`;
+        method = "POST";
+        formData.append('_method', 'PUT');
+    }
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+        },
+        body: formData
+    })
+
+    .then(async response => {
+        const isJson = response.headers.get("content-type")?.includes("application/json");
+        const data = isJson ? await response.json() : null;
+
+        if (!response.ok || !data || !data.success) {
+            throw new Error(data?.message || "Failed to save project.");
+        }
+
+        // Reset form
+        form.reset();
+        document.getElementById('logo-preview')?.classList.add('hidden');
+
+        // Close modal
+        const modalCloseBtn = document.querySelector('[data-modal-toggle="addProjectModal"]');
+        if (modalCloseBtn) modalCloseBtn.click();
+
+        // Show SweetAlert success
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: data.message || 'Project has been added successfully!',
+            confirmButtonColor: '#22c55e'
+        });
+
+        // Reload DataTable
+        $('#datatable').DataTable().ajax.reload(null, false);
+    })
+
+    .catch(error => {
+        console.error("AJAX ERROR:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while saving the project.\n' + error.message,
+            confirmButtonColor: '#ef4444'
+        });
+    })
+
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> &nbsp; Save Project';
+    });
+});
+</script>
+
+
 {{-- DELETE DATA--}}
 <script>
-    function confirmDelete(id) {
-        document.querySelectorAll('.modal-confirm-delete').forEach(e => e.remove());
-
-        const modal = document.createElement('div');
-        modal.classList.add('modal-confirm-delete');
-
-        modal.innerHTML = `
-            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-6 w-full max-w-md text-center shadow space-y-4">
-                    <h2 class="text-xl font-semibold">Are you sure?</h2>
-                    <p class="text-gray-600 text-sm">This project will be permanently deleted.</p>
-                    <div class="flex justify-center gap-4 mt-6">
-                        <button type="button" class="cancel-btn px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded">Cancel</button>
-                        <button type="button" class="delete-btn bg-red-600 hover:bg-red-700 text-red font-semibold px-4 py-2 rounded">Yes, Delete</button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(modal);
-
-        modal.querySelector('.cancel-btn').addEventListener('click', () => modal.remove());
-
-        modal.querySelector('.delete-btn').addEventListener('click', function (e) {
-            e.preventDefault();
-
+function confirmDelete(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'This project will be permanently deleted.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626', // red-600
+        cancelButtonColor: '#6b7280',  // gray-500
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel',
+    }).then((result) => {
+        if (result.isConfirmed) {
             fetch("{{ url('projects') }}/" + id, {
                 method: 'DELETE',
                 headers: {
@@ -269,22 +269,41 @@
             })
             .then(res => res.json())
             .then(data => {
-                modal.remove();
                 if (data.success) {
-                    showAlert(data.message || "Project has been deleted successfully.", 'green');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: data.message || 'Project has been deleted successfully.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                    });
+
+                    // Reload datatable
                     $('#datatable').DataTable().ajax.reload(null, false);
                 } else {
-                    showAlert(data.message || 'Failed to delete the project.', 'red');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message || 'Failed to delete the project.',
+                        confirmButtonColor: '#ef4444'
+                    });
                 }
             })
             .catch(error => {
-                modal.remove();
-                showAlert('An unexpected error occurred while deleting the project.', 'red');
-                console.error(error);
+                console.error("DELETE ERROR:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'An unexpected error occurred while deleting the project.',
+                    confirmButtonColor: '#ef4444'
+                });
             });
-        });
-    }
+        }
+    });
+}
 </script>
+
 
 {{-- NOTIFICATION--}}
 <script>

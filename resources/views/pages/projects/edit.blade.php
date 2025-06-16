@@ -87,7 +87,7 @@
             </div>
 
             <div class="Q_jg_EPdNf9eDMn1mLI2 UYOSZJ1_pv3B5nt1ujCP rvdRhGyExrNYTA6euxsF SQf297smyJVNzzOO3iQL xr7CqaTHxTvDOrwAH2SW">
-                <button type="submit" class="_k0lTW0vvzboctTxDi2R t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU bg-blue-700 hover:bg-blue-400 text-white font-semibold px-4 py-2 rounded-lg w-full"><i class="fa-solid fa-save"></i> &nbsp; Save Project
+                <button type="submit" class="_k0lTW0vvzboctTxDi2R t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU custom-btn-submit"><i class="fa-solid fa-save"></i> &nbsp; Save Project
                 </button>
 
                 <button data-modal-hide="addProjectModal" onclick="resetForm()"
@@ -98,61 +98,68 @@
 
             </div>
             </form>
-        <script>
-    function showAlert(message, color = 'green') {
-        const alertBox = document.createElement('div');
-        alertBox.className = `fixed top-5 right-5 z-50 px-4 py-3 bg-${color}-100 border border-${color}-400 text-${color}-700 rounded shadow`;
-        alertBox.innerHTML = `<strong>${color === 'green' ? 'Success:' : 'Error:'}</strong> ${message}`;
-        document.body.appendChild(alertBox);
-        setTimeout(() => alertBox.remove(), 6000);
-    }
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.querySelector("form");
-        const submitBtn = form.querySelector("button[type='submit']");
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    const submitBtn = form.querySelector("button[type='submit']");
 
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-            const formData = new FormData(form);
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        const formData = new FormData(form);
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
-            // force method override
-            formData.append('_method', 'PUT');
+        // force method override
+        formData.append('_method', 'PUT');
 
-            fetch(form.action, {
-                method: "POST", // karena pakai _method=PUT
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                },
-                body: formData
-            })
-            .then(async response => {
-                const isJson = response.headers.get("content-type")?.includes("application/json");
-                const data = isJson ? await response.json() : null;
+        fetch(form.action, {
+            method: "POST", // karena pakai _method=PUT
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            },
+            body: formData
+        })
+        .then(async response => {
+            const isJson = response.headers.get("content-type")?.includes("application/json");
+            const data = isJson ? await response.json() : null;
 
-                if (!response.ok || !data?.success) {
-                    throw new Error(data?.message || "Failed to update project.");
-                }
+            if (!response.ok || !data?.success) {
+                throw new Error(data?.message || "Failed to update project.");
+            }
 
-                // ✅ Save message to localStorage
-                localStorage.setItem("projectUpdateSuccess", data.message || "Project updated successfully.");
-
+            // ✅ Show SweetAlert success
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message || "Project updated successfully.",
+                confirmButtonColor: '#22c55e',
+                timer: 2500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then(() => {
                 // ✅ Redirect ke halaman projects
                 window.location.href = "{{ route('projects.index') }}";
-            })
-            .catch(error => {
-                console.error("Update Error:", error);
-                showAlert("An error occurred while updating the project.", 'red');
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> &nbsp; Save Project';
             });
+        })
+        .catch(error => {
+            console.error("Update Error:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || "An error occurred while updating the project.",
+                confirmButtonColor: '#ef4444'
+            });
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> &nbsp; Save Project';
         });
     });
+});
 </script>
+
 
     </div>
 </div>

@@ -123,7 +123,8 @@ function updateUnit(fieldName) {
         unitEl.innerText = (value >= 8.33) ? 'ppg' : 'sp.gr';
     }
 }
-
+</script>
+<script>
 function submitDesanders() {
     const form = document.getElementById('formDesanders');
     const button = document.getElementById('saveDesanders');
@@ -146,20 +147,56 @@ function submitDesanders() {
     })
     .then(data => {
         if (data.success) {
-            const confirmRedirect = confirm(
-                "Data has been successfully saved.\n\nYou will be redirected to Desilter in 5 seconds.\n\nClick OK to continue now, or Cancel to stay on this page."
-            );
-            if (confirmRedirect) {
-                window.location.href = "{{ url('projects/details/' . $project_id . '/' . $wellinfo->id_wellinfo . '/desilters') }}";
-            } else {
-                location.reload();
-            }
+            const redirectUrl = "{{ url('projects/details/' . $project_id . '/' . $wellinfo->id_wellinfo . '/desilters') }}";
+            let countdown = 5;
+
+            const interval = setInterval(() => {
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    window.location.href = redirectUrl;
+                }
+                countdown--;
+            }, 1000);
+
+            Swal.fire({
+                title: 'Data Saved Successfully!',
+                html: `You will be redirected to <b>Desilter</b> in <b><span id="des-countdown">5</span></b> seconds.<br><br>
+                       Click <b>Go Now</b> to proceed immediately, or <b>Stay</b> to remain on this page.`,
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: 'Go Now',
+                cancelButtonText: 'Stay Here',
+                didOpen: () => {
+                    const content = Swal.getHtmlContainer();
+                    const $cd = content.querySelector('#des-countdown');
+                    const updateInterval = setInterval(() => {
+                        $cd.textContent = countdown;
+                        if (countdown <= 0) clearInterval(updateInterval);
+                    }, 1000);
+                }
+            }).then((result) => {
+                clearInterval(interval);
+                if (result.isConfirmed) {
+                    window.location.href = redirectUrl;
+                } else {
+                    location.reload();
+                }
+            });
+
         } else {
-            alert("Failed: " + (data.error || "Unknown error."));
+            Swal.fire({
+                icon: 'error',
+                title: 'Save Failed',
+                text: data.error || "Unknown error."
+            });
         }
     })
     .catch(err => {
-        alert("Unexpected error:\n" + (err.message || JSON.stringify(err)));
+        Swal.fire({
+            icon: 'error',
+            title: 'Unexpected Error',
+            text: err.message || JSON.stringify(err)
+        });
     })
     .finally(() => {
         button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
@@ -167,4 +204,5 @@ function submitDesanders() {
     });
 }
 </script>
+
 @endsection

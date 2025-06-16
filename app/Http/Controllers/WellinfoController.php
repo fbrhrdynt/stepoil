@@ -49,17 +49,26 @@ class WellinfoController extends Controller
 
     public function updateFirst(Request $request, $project_id, $wellinfo_id)
     {
-        $wellinfo = Wellinfo::findOrFail($wellinfo_id);
-        $project = Project::findOrFail($project_id);
+        try {
+            $wellinfo = Wellinfo::findOrFail($wellinfo_id);
+            $project = Project::findOrFail($project_id);
     
-        $wellinfo->update($request->only([
-            'platform', 'wellname', 'spud_date', 'location', 'companyman', 'oim', 'mudeng', 'urut'
-        ]));
+            $wellinfo->update($request->only([
+                'platform', 'wellname', 'spud_date', 'location', 'companyman', 'oim', 'mudeng', 'urut'
+            ]));
     
-        return redirect()
-            ->route('wellinfo.show', ['project_id' => $project_id, 'wellinfo_id' => $wellinfo->id_wellinfo])
-            ->with('success', "Project detail for <strong>{$project->operator_name}</strong> successfully updated.");
-    }    
+            return response()->json([
+                'success' => true,
+                'message' => "Project detail for <strong>{$project->operator_name}</strong> successfully updated."
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Failed to update project.",
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }     
 
     public function getWellinfoData(Request $request, $project_id)
     {
@@ -72,24 +81,34 @@ class WellinfoController extends Controller
                 ->editColumn('spud_date', fn($row) => \Carbon\Carbon::parse($row->spud_date)->format('F d, Y'))
                 ->addColumn('action', function ($row) {
                     $viewBtn = '<a href="' . url('projects/details/' . $row->id_project . '/' . $row->id_wellinfo) . '" 
-                                    class="text-green-600 hover:text-green-800 mr-2" title="View Details">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </a>';
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition" 
+                        title="View Details">
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                        </a>';
                 
                     $lockIcon = $row->lockreport === 'NO'
-                        ? '<a href="' . url('wellinfo/lock/' . $row->id_wellinfo) . '" class="text-blue-600 hover:text-blue-800 mr-2" title="Lock">
-                                <i class="fa-solid fa-lock"></i>
+                        ? '<a href="' . url('wellinfo/lock/' . $row->id_wellinfo) . '" 
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition" 
+                            title="Lock Report">
+                                <i class="fa-solid fa-lock text-sm"></i>
                             </a>'
-                        : '<a href="' . url('wellinfo/unlock/' . $row->id_wellinfo) . '" class="text-yellow-600 hover:text-yellow-800 mr-2" title="Unlock">
-                                <i class="fa-solid fa-lock-open"></i>
+                        : '<a href="' . url('wellinfo/unlock/' . $row->id_wellinfo) . '" 
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition" 
+                            title="Unlock Report">
+                                <i class="fa-solid fa-lock-open text-sm"></i>
                             </a>';
                 
-                    $deleteBtn = '<a href="' . url('wellinfo/delete/' . $row->id_wellinfo) . '" onclick="return confirm(\'Are you sure to delete this report?\')" class="text-red-600 hover:text-red-800" title="Delete">
-                                    <i class="fa fa-trash"></i>
-                                </a>';
+                    $deleteBtn = '<a href="#" 
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition delete-report-btn" 
+                        data-id="' . $row->id_wellinfo . '" 
+                        data-url="' . url('wellinfo/delete/' . $row->id_wellinfo) . '" 
+                        title="Delete Report">
+                            <i class="fa fa-trash text-sm"></i>
+                        </a>';
                 
-                    return $viewBtn . $lockIcon . $deleteBtn;
-                })
+                    // ✅ Bungkus semua button dalam <div class="flex gap-2">
+                    return '<div class="flex items-center gap-2">' . $viewBtn . $lockIcon . $deleteBtn . '</div>';
+                })                
                 
                 ->rawColumns(['action'])
                 ->make(true);
@@ -114,17 +133,56 @@ class WellinfoController extends Controller
     
     public function updateWell(Request $request, $project_id, $wellinfo_id)
     {
-        $validated = $request->validate([
-            'id_details' => 'required|integer|exists:details,id_details',
-            'id_wellinfo' => 'required|integer',
-            // Tambahkan validasi sesuai field lainnya
-        ]);
+        try {
+            $validated = $request->validate([
+                'id_details' => 'required|integer|exists:details,id_details',
+                'id_wellinfo' => 'required|integer|exists:wellinfo,id_wellinfo',
     
-        $details = Details::findOrFail($validated['id_details']);
-        $details->update($request->all());
+                'mudcheck_type' => 'nullable|string|max:20',
+                'depth_each' => 'nullable|string|max:10',
+                'depth1bef' => 'nullable|string|max:20',
+                'bitsize' => 'nullable|string|max:10',
+                'bittype' => 'nullable|string|max:50',
+                'washout' => 'nullable|string|max:10',
+                'mudweight' => 'nullable|string|max:10',
+                'mwunit' => 'nullable|string|max:10',
+                'curdepth' => 'nullable|string|max:20',
+                'volholedrill' => 'nullable|string|max:20',
+                'volholeunit' => 'nullable|string|max:10',
+                'avgrop' => 'nullable|string|max:10',
+                'lgsactive' => 'nullable|string|max:10',
+                'datenow' => 'nullable|date',
+                'cirrategpm' => 'nullable|string|max:10',
+                'hgsactive' => 'nullable|string|max:10',
+                'sgbasefluid' => 'nullable|string|max:10',
+                'fluidtype' => 'nullable|string|max:20',
+                'rigpresentact' => 'nullable|string|max:100',
+                'activesysvol' => 'nullable|string|max:10',
+            ]);
     
-        return response()->json(['success' => true]);
+            $details = Details::findOrFail($validated['id_details']);
+            $details->update($validated);
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Well info successfully updated!'
+            ]);
+    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+    
     
     //================= ACTIVE MUD PROPERTIES FORM =================//
     public function editAMP($project_id, $wellinfo_id)

@@ -78,6 +78,7 @@
     function submitCDU2() {
         const form = document.getElementById('formCDU2');
         const button = document.getElementById('saveCDU2');
+
         button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
         button.disabled = true;
 
@@ -94,12 +95,20 @@
             if (data.success) {
                 handleRedirectPromptCDU2();
             } else {
-                alert(data.error || 'Failed to save data.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: data.error || 'Failed to save data.'
+                });
             }
         })
         .catch(err => {
             console.error(err);
-            alert('An unexpected error occurred.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An unexpected error occurred.'
+            });
         })
         .finally(() => {
             button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
@@ -109,27 +118,41 @@
 
     function handleRedirectPromptCDU2() {
         let countdown = 5;
-        const redirectUrl = "{{ url("projects/details/$project_id/{$wellinfo->id_wellinfo}/cutting-dryer-3") }}";
+        const redirectUrl = "{{ url("projects/details/$project_id/{$wellinfo->id_wellinfo}/desanders") }}";
 
         const interval = setInterval(() => {
-            if (countdown === 0) {
+            if (countdown <= 0) {
                 clearInterval(interval);
                 window.location.href = redirectUrl;
             }
             countdown--;
         }, 1000);
 
-        const proceed = confirm(
-            "Data has been successfully saved.\n\nYou will be redirected to Desander in 5 seconds.\n\nClick OK to continue now, or Cancel to stay on this page."
-        );
-
-        if (proceed) {
+        Swal.fire({
+            title: 'Success!',
+            html: `You will be redirected to <b>Desanders</b> in <b><span id="cd-countdown">5</span></b> seconds.<br><br>
+                Click <b>Go Now</b> to proceed immediately, or <b>Stay</b> to remain on this page.`,
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Go Now',
+            cancelButtonText: 'Stay Here',
+            didOpen: () => {
+                const content = Swal.getHtmlContainer();
+                const $cdCountdown = content.querySelector('#cd-countdown');
+                const intervalCountdown = setInterval(() => {
+                    $cdCountdown.textContent = countdown;
+                    if (countdown <= 0) clearInterval(intervalCountdown);
+                }, 1000);
+            }
+        }).then((result) => {
             clearInterval(interval);
-            window.location.href = redirectUrl;
-        } else {
-            clearInterval(interval);
-            location.reload(); // Refresh to reflect saved data
-        }
+            if (result.isConfirmed) {
+                window.location.href = redirectUrl;
+            } else {
+                location.reload(); // Refresh to reflect saved data
+            }
+        });
     }
 </script>
+
 @endsection

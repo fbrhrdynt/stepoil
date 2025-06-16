@@ -54,9 +54,17 @@ class RetortController extends Controller
         foreach ($prefixes as $prefix) {
             foreach ($fields as $field) {
                 $key = "rt_{$prefix}_{$field}";
-                $dataRetort[$key] = $clean($request->input($key));
+                $val = $request->input($key);
+        
+                if ($field === 'sampletime' && preg_match('/^\d{2}:\d{2}$/', $val)) {
+                    [$hour, $minute] = explode(':', $val);
+                    $dataRetort[$key] = (int)$hour * 60 + (int)$minute;
+                } else {
+                    $dataRetort[$key] = $clean($val);
+                }
             }
         }
+        
     
         $dataRetort['oil_recovered'] = $clean($request->input('oil_recovered'));
         $dataRetort['mud_recovered'] = $clean($request->input('mud_recovered'));

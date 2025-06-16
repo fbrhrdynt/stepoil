@@ -68,7 +68,7 @@
           </div>
 
           <div class="Q_jg_EPdNf9eDMn1mLI2">
-              <button type="submit" class="_k0lTW0vvzboctTxDi2R bg-blue-700 text-white px-4 py-2 rounded-lg w-full">
+              <button type="submit" class="custom-btn-submit">
                   <i class="fa-solid fa-save"></i> &nbsp; Save Project
               </button>
 

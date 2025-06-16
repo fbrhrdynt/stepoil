@@ -187,17 +187,20 @@ class ProjectController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($project) {
                     return '
-                        <a href="' . route('projects.edit', $project->id_project) . '">
-                            <i class="fa-solid fa-pen-to-square text-yellow-500 text-xl hover:text-yellow-600 ml-3"></i>
-                        </a> &nbsp;&nbsp;&nbsp;
-                        <a href="' . route('projects.details', ['project_id' => $project->id_project]) . '" class="ml-3" title="View Well Info">
-                            <i class="fa-solid fa-file-lines text-blue-500 text-xl hover:text-blue-700"></i>
-                        </a>&nbsp;&nbsp;&nbsp;
-                        <button type="button" onclick="confirmDelete(' . $project->id_project . ')" class="ml-3">
-                            <i class="fa-solid fa-trash-can text-red-500 text-xl hover:text-red-700"></i>
-                        </button>
+                        <div class="flex items-center space-x-4 justify-center">
+                            <a href="' . route('projects.edit', $project->id_project) . '" title="Edit Project">
+                                <i class="fa-solid fa-pen-to-square text-yellow-500 text-xl hover:text-yellow-600"></i>
+                            </a>
+                            <a href="' . route('projects.details', ['project_id' => $project->id_project]) . '" title="View Well Info">
+                                <i class="fa-solid fa-file-lines text-blue-500 text-xl hover:text-blue-700"></i>
+                            </a>
+                            <button type="button" onclick="confirmDelete(' . $project->id_project . ')" title="Delete Project">
+                                <i class="fa-solid fa-trash-can text-red-500 text-xl hover:text-red-700"></i>
+                            </button>
+                        </div>
                     ';
                 })
+                
                 ->rawColumns(['action'])
                 ->make(true);
         }

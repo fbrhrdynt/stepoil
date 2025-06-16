@@ -10,7 +10,7 @@
                     <h2 class="text-2xl font-semibold leading-tight">Edit Report</h2>
                 </div>
 
-                <form action="{{ route('wellinfo.updatefirst', [$project_id, $wellinfo->id_wellinfo]) }}" method="POST">
+                <form id="formUpdateFirst" action="{{ route('wellinfo.updatefirst', [$project_id, $wellinfo->id_wellinfo]) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -69,4 +69,56 @@
         </div>
     </div>
 </div></div>
+
+<script>
+document.getElementById('formUpdateFirst').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector("button[type='submit']");
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+    fetch(form.action, {
+        method: "POST",
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+        },
+        body: formData
+    })
+    .then(async res => {
+        const isJson = res.headers.get("content-type")?.includes("application/json");
+        const data = isJson ? await res.json() : null;
+
+        if (!res.ok || !data?.success) {
+            throw new Error(data?.message || 'Update failed');
+        }
+
+        // ✅ SweetAlert success + refresh setelah OK
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            html: data.message,
+            confirmButtonText: 'OK'
+        }).then(() => {
+            location.reload();
+        });
+    })
+    .catch(error => {
+        console.error("Update error:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message,
+        });
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save';
+    });
+});
+</script>
+
+
 @endsection

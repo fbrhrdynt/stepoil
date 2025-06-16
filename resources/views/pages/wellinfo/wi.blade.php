@@ -197,29 +197,49 @@
         const form = document.getElementById('formWellInfo');
         const button = document.getElementById('saveWellInfo');
 
+        button.disabled = true;
         button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
         fetch(form.action, {
             method: 'POST',
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
             body: new FormData(form)
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                alert('Data saved successfully.');
-                location.reload();
-            } else {
-                alert(data.error || 'Failed to save.');
+        .then(async response => {
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 422 && data.errors) {
+                    const firstError = Object.values(data.errors)[0][0];
+                    throw new Error(firstError);
+                }
+                throw new Error(data.message || 'Failed to save data.');
             }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message || 'Well info saved successfully!',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                location.reload();
+            });
         })
-        .catch(err => {
-            console.error(err);
-            alert('Something went wrong!');
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: error.message || 'Something went wrong while saving!',
+            });
         })
         .finally(() => {
-            button.innerHTML = '<i class="fa-solid fa-save"></i> Save Data';
+            button.disabled = false;
+            button.innerHTML = '<i class="fa-solid fa-save"></i> &nbsp; Save Data';
         });
     }
 </script>
+
 @endsection

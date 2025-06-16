@@ -53,6 +53,7 @@
 
 
 @section('scripts')
+
 <script>
     function submitShaker() {
         const form = document.getElementById('formShaker');
@@ -69,17 +70,25 @@
             },
             body: new FormData(form)
         })
-        .then(res => res.json())
-        .then(data => {
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.message || 'Failed to save data.');
+            }
+
             if (data.success) {
                 handleRedirectPrompt();
             } else {
-                alert(data.error || 'Failed to save data.');
+                throw new Error(data.error || 'Failed to save data.');
             }
         })
         .catch(err => {
             console.error(err);
-            alert('An unexpected error occurred.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: err.message || 'An unexpected error occurred.',
+            });
         })
         .finally(() => {
             button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
@@ -91,26 +100,41 @@
         let countdown = 5;
         const redirectUrl = "{{ url("projects/details/$project_id/{$wellinfo->id_wellinfo}/centrifuge-1") }}";
 
-        const interval = setInterval(() => {
-            if (countdown === 0) {
-                clearInterval(interval);
+        const timerInterval = setInterval(() => {
+            if (countdown <= 0) {
+                clearInterval(timerInterval);
                 window.location.href = redirectUrl;
             }
             countdown--;
         }, 1000);
 
-        const proceed = confirm(
-            "Data has been successfully saved.\n\nYou will be redirected to Centrifuge 1 in 5 seconds.\n\nClick OK to continue now, or Cancel to stay on this page."
-        );
-
-        if (proceed) {
-            clearInterval(interval);
-            window.location.href = redirectUrl;
-        } else {
-            clearInterval(interval);
-            location.reload(); // ✅ Force form refresh with updated data
-        }
+        Swal.fire({
+            title: 'Data Saved!',
+            html: `You will be redirected to <b>Centrifuge 1</b> in <b><span id="countdown">5</span></b> seconds.<br><br>
+            Click <b>Go Now</b> to redirect immediately, or <b>Stay</b> to remain here.`,
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Go Now',
+            cancelButtonText: 'Stay Here',
+            didOpen: () => {
+                const content = Swal.getHtmlContainer();
+                const $countdown = content.querySelector('#countdown');
+                const countdownInterval = setInterval(() => {
+                    $countdown.textContent = countdown;
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+            }
+        }).then((result) => {
+            clearInterval(timerInterval);
+            if (result.isConfirmed) {
+                window.location.href = redirectUrl;
+            } else {
+                location.reload();
+            }
+        });
     }
-
 </script>
+
 @endsection

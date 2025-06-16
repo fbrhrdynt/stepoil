@@ -172,58 +172,83 @@ function Perubahan3() {
         document.getElementById("cf3_volcake").value = volCakeM3.toFixed(2);
     }
 }
-
-function submitCentrifuge3() {
-    const form = document.getElementById('formCentrifuge3');
-    const button = document.getElementById('saveCentrifuge3');
-    button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-    button.disabled = true;
-
-    fetch(form.action, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: new FormData(form)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            handleRedirectToDryer1();
-        } else {
-            alert(data.error || 'Failed to save data.');
-        }
-    })
-    .catch(() => {
-        alert('An unexpected error occurred.');
-    })
-    .finally(() => {
-        button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
-        button.disabled = false;
-    });
-}
-
-function handleRedirectToDryer1() {
-    let seconds = 5;
-    const redirectUrl = "{{ url("projects/details/$project_id/{$wellinfo->id_wellinfo}/cutting-dryer-1") }}";
-
-    const interval = setInterval(() => {
-        if (seconds <= 0) {
-            clearInterval(interval);
-            window.location.href = redirectUrl;
-        }
-        seconds--;
-    }, 1000);
-
-    const confirmRedirect = confirm("Data has been successfully saved.\n\nYou will be redirected to Cutting Dryer 1 in 5 seconds.\n\nClick OK to go now, or Cancel to stay.");
-
-    if (confirmRedirect) {
-        clearInterval(interval);
-        window.location.href = redirectUrl;
-    } else {
-        location.reload();
-    }
-}
 </script>
+<script>
+    function submitCentrifuge3() {
+        const form = document.getElementById('formCentrifuge3');
+        const button = document.getElementById('saveCentrifuge3');
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        button.disabled = true;
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new FormData(form)
+        })
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to save data.');
+
+            if (data.success) {
+                handleRedirectToDryer1();
+            } else {
+                throw new Error(data.error || 'Failed to save data.');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: err.message || 'An unexpected error occurred.',
+            });
+        })
+        .finally(() => {
+            button.innerHTML = '<i class="fa-regular fa-floppy-disk"></i> Save Data';
+            button.disabled = false;
+        });
+    }
+
+    function handleRedirectToDryer1() {
+        let seconds = 5;
+        const redirectUrl = "{{ url("projects/details/$project_id/{$wellinfo->id_wellinfo}/cdu-1") }}";
+
+        const timer = setInterval(() => {
+            if (seconds <= 0) {
+                clearInterval(timer);
+                window.location.href = redirectUrl;
+            }
+            seconds--;
+        }, 1000);
+
+        Swal.fire({
+            title: 'Data Saved!',
+            html: `You will be redirected to <b>Cutting Dryer 1</b> in <b><span id="countdown">5</span></b> seconds.<br><br>
+                Click <b>Go Now</b> to redirect immediately, or <b>Stay</b> to remain on this page.`,
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Go Now',
+            cancelButtonText: 'Stay Here',
+            didOpen: () => {
+                const content = Swal.getHtmlContainer();
+                const $countdown = content.querySelector('#countdown');
+                const countdownInterval = setInterval(() => {
+                    $countdown.textContent = seconds;
+                    if (seconds <= 0) clearInterval(countdownInterval);
+                }, 1000);
+            }
+        }).then((result) => {
+            clearInterval(timer);
+            if (result.isConfirmed) {
+                window.location.href = redirectUrl;
+            } else {
+                location.reload();
+            }
+        });
+    }
+</script>
+
 @endsection
