@@ -26,23 +26,6 @@
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="theme-color" content="#ffffff">
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@">
-<meta name="twitter:creator" content="@">
-<meta name="twitter:title" content="Tailwind CSS E-commerce Dashboard - Flowbite">
-<meta name="twitter:description" content="Get started with a premium admin dashboard interface built with Tailwind CSS and Flowbite featuring over 50 example pages of charts, calendars, kanban boards, dashboards, CRUD pages, mailing systems, and more.">
-<meta name="twitter:image" content="https://flowbite.com/application-ui/demo/images/og-image.jpg">
-
-<!-- Facebook -->
-<meta property="og:url" content="https://flowbite.com/application-ui/demo/homepages/e-commerce/">
-<meta property="og:title" content="Tailwind CSS E-commerce Dashboard - Flowbite">
-<meta property="og:description" content="Get started with a premium admin dashboard interface built with Tailwind CSS and Flowbite featuring over 50 example pages of charts, calendars, kanban boards, dashboards, CRUD pages, mailing systems, and more.">
-<meta property="og:type" content="article">
-<meta property="og:image" content="https://flowbite.com/application-ui/demo/images/og-image.jpg">
-<meta property="og:image:type" content="image/png">
-
-
 
 <script>
   

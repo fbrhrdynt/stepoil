@@ -9,7 +9,7 @@ $level = $user->level;
 <header>
   <nav class="navbar">
     <div class="logo-container" id="btnToggleMenu" aria-label="Toggle Menu">
-      <img src="{{ asset('isi/icons_fotrack/fotrack.png') }}" alt="FOTrack Logo" />
+      <img src="{{ asset('isi/icons_fotrack/fotrack.png') }}" width="100px" height="12px" alt="FOTrack Logo" />
       <span style="color: grey">Field Operation Track System</span>
     </div>
   </nav>
