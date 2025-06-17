@@ -1,24 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-@if(session('success'))
-<div id="flash-message" class="fixed top-5 right-5 z-50 bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded shadow-md flex items-start justify-between gap-3 max-w-md">
-    <div class="flex items-center gap-2">
-        <i class="fa-solid fa-circle-check text-green-600"></i>
-        <span>{!! session('success') !!}</span>
-    </div>
-    <button onclick="document.getElementById('flash-message').remove()" class="text-green-600 hover:text-green-800">
-        &times;
-    </button>
-</div>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
-<script>
-    setTimeout(() => {
-        const flash = document.getElementById('flash-message');
-        if (flash) flash.remove();
-    }, 5000);
-</script>
-@endif
 
 <div class="xCPtuxM4_gihvpPwv9bX t6gkcSf0Bt4MLItXvDJ_ Nu4HUn5EQpnNJ1itNkrd iHPddplqYvrN6qWgvntn AqVNvLG_H6VHhym2yKMp">
     <div class="NM7Z1HBVjN_86WhEcXan mveJTCIb2WII7J4sY22F pXhVRBC8yaUNllmIWxln qUWbS_LTZujDB4XCd11V _Ybd3WwuTVljUT4vEaM3 IvHclGgvMLtYg_ow0uba fzhbbDQ686T8arwvi_bJ _fGhMnSfYmaGrv7DvZ00 _1jTZ8KXRZul60S6czNi">
@@ -30,17 +14,94 @@
                 <div class="flex gap-4 items-center">
                     {{-- LOCK / UNLOCK --}}
                     @if($wellinfo->lockreport === 'NO')
-                        <a href="{{ url('wellinfo/lock/'.$wellinfo->id_wellinfo) }}"
+                    <button 
+                        onclick="confirmLock({{ $wellinfo->id_wellinfo }})"
                         class="group relative flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-600 transition-all duration-200"
                         title="Lock Report">
-                            <i class="fa-solid fa-lock text-blue-600 group-hover:text-white text-lg"></i>
-                        </a>
+                        <i class="fa-solid fa-lock text-blue-600 group-hover:text-white text-lg"></i>
+                    </button>
+                    <script>
+                    function confirmLock(wellinfoId) {
+                        Swal.fire({
+                            title: 'Lock this report?',
+                            text: "Once locked, the report can no longer be modified.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#aaa',
+                            confirmButtonText: 'Yes, lock it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/wellinfo/lock/' + wellinfoId;
+                            }
+                        });
+                    }
+                    </script>
                     @else
-                        <a href="{{ url('wellinfo/unlock/'.$wellinfo->id_wellinfo) }}"
-                            class="group relative flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-600 transition-all duration-200"
-                            title="Unlock Report">
-                            <i class="fa-solid fa-unlock text-blue-600 group-hover:text-white text-lg"></i>
-                        </a>
+                    {{-- UNLOCK via Swal --}}
+                    <a href="javascript:void(0)" 
+                        onclick="unlockWithCode({{ $wellinfo->id_wellinfo }})"
+                        class="group relative flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 hover:bg-blue-600 transition-all duration-200"
+                        title="Unlock Report">
+                        <i class="fa-solid fa-unlock text-blue-600 group-hover:text-white text-lg"></i>
+                    </a>
+                    <script>
+                    function unlockWithCode(wellinfoId) {
+                        Swal.fire({
+                            title: 'Enter Access Code',
+                            input: 'text',
+                            inputLabel: 'Access Code',
+                            inputPlaceholder: 'Enter the project access code',
+                            showCancelButton: true,
+                            confirmButtonText: 'Unlock',
+                            cancelButtonText: 'Cancel',
+                            inputAttributes: {
+                                maxlength: 20,
+                                autocapitalize: 'off',
+                                autocorrect: 'off'
+                            },
+                            preConfirm: (accessCode) => {
+                                if (!accessCode) {
+                                    Swal.showValidationMessage('Access code cannot be empty');
+                                    return false;
+                                }
+
+                                return fetch(`/wellinfo/unlock/${wellinfoId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({ kodeakses: accessCode })
+                                })
+                                .then(response => {
+                                    return response.json().then(data => {
+                                        if (!response.ok) {
+                                            throw new Error(data.message || 'Invalid or failed access code.');
+                                        }
+                                        return data;
+                                    });
+                                })
+                                .catch(error => {
+                                    Swal.showValidationMessage(error.message);
+                                });
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Unlocked!',
+                                    text: result.value.message || 'The report has been successfully unlocked.',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            }
+                        });
+                    }
+                    </script>
+
 
                         {{-- PRINT --}}
                         <button onclick="onPrintClick()" 

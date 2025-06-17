@@ -20,24 +20,24 @@
             <div class="hD0sTTDgbxakubcHVW2X xCPtuxM4_gihvpPwv9bX iHPddplqYvrN6qWgvntn AqVNvLG_H6VHhym2yKMp">
                 <div>
                     <label for="employee_id" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Employee ID</label>
-                    <input type="text" name="employee_id" id="employee_id" class="_Vb9igHms0hI1PQcvp_S bg-gray-100 cursor-not-allowed" value="{{ $user->employee_id }}" readonly>
+                    <input type="text" name="employee_id" id="employee_id" class="custom-input bg-gray-100 cursor-not-allowed" value="{{ $user->employee_id }}" readonly>
                     <small class="text-sm text-red-600 mt-1 block">
                         <i class="fa-solid fa-ban mr-1"></i> Employee ID cannot be changed.
                     </small>
                 </div>
                 <div>
                     <label for="employee_name" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Employee Name</label>
-                    <input type="text" name="employee_name" id="employee_name" class="_Vb9igHms0hI1PQcvp_S" value="{{ $user->employee_name }}" required>
+                    <input type="text" name="employee_name" id="employee_name" class="custom-input" value="{{ $user->employee_name }}" required>
                 </div>
 
                 <div>
                     <label for="email" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Email</label>
-                    <input type="email" name="email" id="email" class="_Vb9igHms0hI1PQcvp_S" value="{{ $user->email }}">
+                    <input type="email" name="email" id="email" class="custom-input" value="{{ $user->email }}">
                 </div>
 
                 <div>
                     <label for="kode_login" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Username</label>
-                    <input type="text" name="kode_login" id="kode_login" class="_Vb9igHms0hI1PQcvp_S" value="{{ $user->kode_login }}" required>
+                    <input type="text" name="kode_login" id="kode_login" class="custom-input bg-gray-100 cursor-not-allowed" value="{{ $user->kode_login }}" readonly>
                     <small id="usernameFeedback" class="text-sm mt-1 block text-gray-500">
                         Username must be unique.
                     </small>
@@ -45,7 +45,7 @@
 
                 <div>
                     <label for="level" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Level</label>
-                    <select name="level" id="level" class="_Vb9igHms0hI1PQcvp_S" required>
+                    <select name="level" id="level" class="custom-input" required>
                         <option value="Supervisor" @selected($user->level == 'Supervisor')>Supervisor</option>
                         <option value="Operator" @selected($user->level == 'Operator')>Operator</option>
                         <option value="Staff" @selected($user->level == 'Staff')>Staff</option>
@@ -78,7 +78,7 @@
                         <div class="relative">
                             <!-- New Password -->
                             <input type="password" name="pass_login" id="pass_login"
-                                class="border border-gray-300 rounded w-full px-3 py-2 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="custom-input"
                                 placeholder="Enter New Password"
                                 oninput="validatePassword()">
                             <span class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onclick="togglePassword('pass_login')">
@@ -95,7 +95,7 @@
                         <div class="relative">
                             <!-- Confirm Password -->
                             <input type="password" name="confirm_password" id="confirm_password"
-                                class="border border-gray-300 rounded w-full px-3 py-2 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="custom-input"
                                 placeholder="Re-type Password"
                                 oninput="validateConfirmPassword()">
 
@@ -113,7 +113,7 @@
 
             <div class="Q_jg_EPdNf9eDMn1mLI2 UYOSZJ1_pv3B5nt1ujCP rvdRhGyExrNYTA6euxsF SQf297smyJVNzzOO3iQL xr7CqaTHxTvDOrwAH2SW mt-4">
                 <button type="submit"
-                        class="_k0lTW0vvzboctTxDi2R bg-blue-700 hover:bg-blue-400 text-white font-semibold px-4 py-2 rounded-lg w-full">
+                        class="_k0lTW0vvzboctTxDi2R custom-btn-submit font-semibold px-4 py-2 rounded-lg w-full">
                     <i class="fa-solid fa-save"></i> &nbsp; Save Account
                 </button>
                 <a href="{{ route('accounts.index') }}"
@@ -262,63 +262,93 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById('editAccountForm');
     const submitBtn = form.querySelector("button[type='submit']");
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-        const formData = new FormData(form);
-        formData.append('_method', 'PUT');
+            const formData = new FormData(form);
+            formData.append('_method', 'PUT');
 
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving...';
 
-        fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Simpan message ke localStorage agar bisa diakses di halaman berikutnya
-                localStorage.setItem('accountSuccess', data.message);
-
-                // Redirect ke index
-                window.location.href = "{{ route('accounts.index') }}";
-            } else {
-                showAlert(data.message || "Update failed.", 'red');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            showAlert("Something went wrong!", 'red');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fa fa-save"></i> &nbsp; Save Account';
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        window.location.href = "{{ route('accounts.index') }}";
+                    });
+                } else {
+                    if (data.errors) {
+                        const messages = Object.values(data.errors)
+                            .map(msgArr => msgArr.join(' '))
+                            .join('\n');
+                        showSweetAlert('Validation Error', messages, 'error');
+                    } else {
+                        showSweetAlert('Failed', data.message || "Update failed.", 'error');
+                    }
+                }
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+                showSweetAlert("Error", "Something went wrong!", "error");
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa fa-save"></i> &nbsp; Save Account';
+            });
         });
-    });
+    }
 
-    // Cek apakah ada pesan sukses setelah redirect
+    // ✅ Jalankan setelah halaman sudah di-redirect ke index
     const successMessage = localStorage.getItem('accountSuccess');
     if (successMessage) {
-        showAlert(successMessage, 'green');
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: successMessage,
+            timer: 3000,
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
+        });
         localStorage.removeItem('accountSuccess');
     }
 
-    // Notifikasi helper
-    function showAlert(message, color = 'green') {
-        const alertBox = document.createElement('div');
-        alertBox.className = `fixed top-5 right-5 z-50 px-4 py-3 bg-${color}-100 border border-${color}-400 text-${color}-700 rounded shadow`;
-        alertBox.innerHTML = `<strong>${color === 'green' ? 'Success:' : 'Error:'}</strong> ${message}`;
-        document.body.appendChild(alertBox);
-        setTimeout(() => alertBox.remove(), 5000);
+    // ✅ SweetAlert helper (tidak perlu dipanggil kalau langsung Swal.fire seperti di atas)
+    function showSweetAlert(title, message, icon = 'success') {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: data.message,
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end',
+            willClose: () => {
+                window.location.href = "{{ route('accounts.index') }}";
+            }
+        });
     }
 });
 </script>

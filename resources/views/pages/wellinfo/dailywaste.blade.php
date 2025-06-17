@@ -128,18 +128,37 @@
                         }
                     }
                     </script>
-                    <!-- Tambahkan SweetAlert2 -->
-                    @if (session('success'))
-                    <script>
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: '{{ session('success') }}',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
-                        });
-                    </script>
-                    @endif
+<!-- Tambahkan SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if (session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Update Successful',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    });
+</script>
+@endif
+
+@if ($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            html: `{!! implode('<br>', $errors->all()) !!}`,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Close'
+        });
+    });
+</script>
+@endif
+
 
             </div>
         </div>

@@ -41,6 +41,52 @@ class WellinfoController extends Controller
         ]);
     }    
     
+    public function getWellinfoData(Request $request, $project_id)
+    {
+        if ($request->ajax()) {
+            $data = Wellinfo::where('id_project', $project_id)->get();
+    
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->editColumn('curdate', fn($row) => \Carbon\Carbon::parse($row->curdate)->format('F d, Y'))
+                ->editColumn('spud_date', fn($row) => \Carbon\Carbon::parse($row->spud_date)->format('F d, Y'))
+                ->addColumn('action', function ($row) {
+                    $viewBtn = '<a href="' . url('projects/details/' . $row->id_project . '/' . $row->id_wellinfo) . '" 
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition" 
+                        title="View Details">
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                        </a>';
+                
+                    $lockIcon = $row->lockreport === 'NO'
+                        ? '<button onclick="confirmLock(' . $row->id_wellinfo . ')" 
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition" 
+                            title="Lock Report">
+                                <i class="fa-solid fa-lock text-sm"></i>
+                            </button>'
+                        : '<button onclick="unlockWithCode(' . $row->id_wellinfo . ')" 
+                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition" 
+                            title="Unlock Report">
+                                <i class="fa-solid fa-lock-open text-sm"></i>
+                            </button>';
+                    
+                
+                    $deleteBtn = '<a href="#" 
+                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition delete-report-btn" 
+                        data-id="' . $row->id_wellinfo . '" 
+                        data-url="' . url('wellinfo/delete/' . $row->id_wellinfo) . '" 
+                        title="Delete Report">
+                            <i class="fa fa-trash text-sm"></i>
+                        </a>';
+                
+                    // ✅ Bungkus semua button dalam <div class="flex gap-2">
+                    return '<div class="flex items-center gap-2">' . $viewBtn . $lockIcon . $deleteBtn . '</div>';
+                })                
+                
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+
     public function editFirst($project_id, $wellinfo_id)
     {
         $wellinfo = Wellinfo::findOrFail($wellinfo_id);
@@ -69,51 +115,6 @@ class WellinfoController extends Controller
             ], 500);
         }
     }     
-
-    public function getWellinfoData(Request $request, $project_id)
-    {
-        if ($request->ajax()) {
-            $data = Wellinfo::where('id_project', $project_id)->get();
-    
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->editColumn('curdate', fn($row) => \Carbon\Carbon::parse($row->curdate)->format('F d, Y'))
-                ->editColumn('spud_date', fn($row) => \Carbon\Carbon::parse($row->spud_date)->format('F d, Y'))
-                ->addColumn('action', function ($row) {
-                    $viewBtn = '<a href="' . url('projects/details/' . $row->id_project . '/' . $row->id_wellinfo) . '" 
-                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition" 
-                        title="View Details">
-                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                        </a>';
-                
-                    $lockIcon = $row->lockreport === 'NO'
-                        ? '<a href="' . url('wellinfo/lock/' . $row->id_wellinfo) . '" 
-                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition" 
-                            title="Lock Report">
-                                <i class="fa-solid fa-lock text-sm"></i>
-                            </a>'
-                        : '<a href="' . url('wellinfo/unlock/' . $row->id_wellinfo) . '" 
-                            class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition" 
-                            title="Unlock Report">
-                                <i class="fa-solid fa-lock-open text-sm"></i>
-                            </a>';
-                
-                    $deleteBtn = '<a href="#" 
-                        class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition delete-report-btn" 
-                        data-id="' . $row->id_wellinfo . '" 
-                        data-url="' . url('wellinfo/delete/' . $row->id_wellinfo) . '" 
-                        title="Delete Report">
-                            <i class="fa fa-trash text-sm"></i>
-                        </a>';
-                
-                    // ✅ Bungkus semua button dalam <div class="flex gap-2">
-                    return '<div class="flex items-center gap-2">' . $viewBtn . $lockIcon . $deleteBtn . '</div>';
-                })                
-                
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-    }
 
     //================= WELL INFO FORM =================//
 
@@ -448,12 +449,16 @@ class WellinfoController extends Controller
         }
     }
 
-    
-
     public function lock($id)
     {
-        Wellinfo::where('id_wellinfo', $id)->update(['lockreport' => 'YES']);
-        return redirect()->back()->with('success', 'Report locked successfully!');
+        $wellinfo = Wellinfo::findOrFail($id);
+        $wellinfo->lockreport = 'YES';
+        $wellinfo->save();
+    
+        return response()->json([
+            'message' => 'Report has been locked successfully.',
+            'status' => true,
+        ]);
     }
 
     public function unlock($id)
@@ -462,6 +467,24 @@ class WellinfoController extends Controller
         return redirect()->back()->with('success', 'Report unlocked successfully!');
     }
 
+    public function unlockWithCode(Request $request, $id)
+    {
+        \Log::info('Unlock attempt', ['id' => $id, 'input' => $request->all()]);
+        
+        $kodeakses = $request->input('kodeakses');
+        $wellinfo = Wellinfo::findOrFail($id);
+        $project = Project::find($wellinfo->id_project);
+    
+        if (trim($kodeakses) === trim($project->kodeakses)) {
+            $wellinfo->lockreport = 'NO';
+            $wellinfo->save();
+    
+            return response()->json(['message' => 'Unlocked successfully']);
+        }
+    
+        return response()->json(['message' => 'Kode akses salah'], 403);
+    }
+    
     public function destroy($id)
     {
         Wellinfo::findOrFail($id)->delete();
@@ -531,5 +554,6 @@ class WellinfoController extends Controller
     {
         return Excel::download(new WellSummaryExport($projectId), 'Well Summary.xlsx');
     }
+
     
 }

@@ -176,7 +176,7 @@ class DailyWasteController extends Controller
         );
     
         return redirect()->route('wellinfo.daily-waste', [$project_id, $wellinfo_id])
-            ->with('success', 'Daily Waste & Activity berhasil diperbarui.');
+            ->with('success', 'Data has been successfully updated.');
     }
     
     

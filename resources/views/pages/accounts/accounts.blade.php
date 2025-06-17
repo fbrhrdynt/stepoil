@@ -7,7 +7,7 @@
     <div class="py-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold leading-tight">Manage Accounts</h2>
-            <a href="{{ url('/accounts/add') }}" class="px-4 py-2 bg-green-900 text-white rounded-lg hover:bg-green-600">
+            <a href="{{ url('/accounts/add') }}" class="custom-btn-submit">
                 + Add New Account
             </a>
         </div>

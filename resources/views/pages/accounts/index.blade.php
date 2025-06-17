@@ -23,7 +23,7 @@
             <div class="py-8">
                 <div class="flex justify-between items-center mb-4">
                     <h1 class="text-2xl font-semibold leading-tight">Manage Accounts</h1>
-                    <button id="createAccountButton" data-modal-target="addAccountModal" data-modal-toggle="addAccountModal" type="button" class="YRrCJSr_j5nopfm4duUc t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU mveJTCIb2WII7J4sY22F g40_g3BQzYCOX5eZADgY _Cj_M6jt2eLjDgkBBNgI b9aD6g2qw84oyZNsMO8j c8dCx6gnV43hTOLV6ks5 ezMFUVl744lvw6ht0lFe y6GKdvUrd7vp_pxsFb57 YoPCmQ0E_V5W0GGmSIdm BkIbg_JwkgiyRW804Hhu _dylIDxYTN3qgvD4U597 KmgKPWh7pHX4ztLneO0T d8_fVOcgDmbt7UdpfeLK WuKugQzwTT7o1wwBck2R _ZsTMX_gz275093orLWM icxWjIgUd9_dzYucx1nx">
+                    <button id="createAccountButton" data-modal-target="addAccountModal" data-modal-toggle="addAccountModal" type="button" class="custom-btn-submit">
                         <i class="fa-solid fa-plus"></i> Add New Account
                     </button>
                 </div>
@@ -108,96 +108,92 @@
     });
 
     function confirmDelete(id) {
-        const modal = document.createElement('div');
-        modal.classList.add('modal-confirm-delete');
-        modal.innerHTML = `
-            <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-                <div class="bg-white rounded-lg p-6 w-full max-w-md text-center shadow space-y-4">
-                    <h2 class="text-xl font-semibold">Confirm Delete</h2>
-                    <p class="text-gray-600">This account will be permanently deleted. Proceed?</p>
-                    <div class="flex justify-center gap-4 pt-4">
-                        <button class="cancel-btn px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded">Cancel</button>
-                        <button class="delete-btn px-4 py-2 bg-red-600 hover:bg-red-700 text-black rounded">Yes, Delete</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        modal.querySelector('.cancel-btn').addEventListener('click', () => modal.remove());
-
-        modal.querySelector('.delete-btn').addEventListener('click', () => {
-            fetch(`{{ url('accounts') }}/${id}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    _method: 'DELETE'
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This account will be permanently deleted.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#e3342f',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete it!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`{{ url('accounts') }}/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        _method: 'DELETE'
+                    })
                 })
+                .then(res => res.json())
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: data.message || 'The account has been deleted.'
+                    });
+                    $('#datatable').DataTable().ajax.reload(null, false);
+                })
+                .catch(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'An error occurred while deleting the account.'
+                    });
+                });
+            }
+        });
+    }
+
+    function toggleStatus(userId, currentStatus) {
+    const action = currentStatus === 'Y' ? 'Deactivate' : 'Activate';
+    const confirmText = currentStatus === 'Y'
+        ? 'This will block the user from accessing the system.'
+        : 'This will allow the user to access the system.';
+
+    Swal.fire({
+        title: `Are you sure?`,
+        text: `${action} this account?\n\n${confirmText}`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#aaa',
+        confirmButtonText: `Yes, ${action.toLowerCase()} it!`,
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`{{ url('accounts') }}/${userId}/toggle-status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
             })
             .then(res => res.json())
             .then(data => {
-                modal.remove();
-                showAlert(data.message || "Deleted", 'green');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message || `${action} successful`
+                });
                 $('#datatable').DataTable().ajax.reload(null, false);
             })
             .catch(() => {
-                modal.remove();
-                showAlert("An error occurred while deleting the account.", 'red');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong.'
+                });
             });
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const successMessage = localStorage.getItem('accountSuccess');
-        if (successMessage) {
-            showAlert(successMessage, 'green');
-            localStorage.removeItem('accountSuccess');
         }
     });
-
-    function showAlert(message, color = 'green') {
-        const alertBox = document.createElement('div');
-        alertBox.className = `fixed top-5 right-5 z-50 px-4 py-3 bg-${color}-100 border border-${color}-400 text-${color}-700 rounded shadow`;
-        alertBox.innerHTML = `<strong>${color === 'green' ? 'Success:' : 'Error:'}</strong> ${message}`;
-        document.body.appendChild(alertBox);
-        setTimeout(() => alertBox.remove(), 6000);
-    }
-</script>
-
-<script>
-function toggleStatus(userId, currentStatus) {
-    const action = currentStatus === 'Y' ? 'deactivate' : 'activate';
-    const confirmMessage = currentStatus === 'Y'
-        ? 'Are you sure you want to deactivate this account?\n\nThis will prevent the user from accessing the system (blocked).'
-        : 'Are you sure you want to activate this account?';
-
-    if (confirm(confirmMessage)) {
-        fetch(`{{ url('accounts') }}/${userId}/toggle-status`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                showAlert(data.message);
-                $('#datatable').DataTable().ajax.reload(null, false);
-            } else {
-                showAlert("Failed to update status", 'red');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            showAlert("Something went wrong", 'red');
-        });
-    }
 }
+
 
 </script>
 

@@ -37,6 +37,7 @@ $user = auth()->user();
                 <li class="me-2">
                     <a href="{{ url("projects/details/{$projectId}/{$wellinfoId}") }}" class="inline-block p-4 border-b-2 rounded-t-lg {{ request()->routeIs('projects.details*') ? 'tab-active' : 'border-transparent hover:text-gray-600 hover:border-gray-300' }}"><i class="fa-regular fa-file"></i> Current Report</a>
                 </li>
+@if($wellinfo->lockreport === 'NO')
                 {{-- Edit Report --}}
                 <li class="me-2">
                     <a href="{{ url("projects/details/{$projectId}/{$wellinfoId}/edit-first") }}" class="inline-block p-4 border-b-2 rounded-t-lg {{ request()->routeIs('projects.details*') ? 'tab-active' : 'border-transparent hover:text-gray-600 hover:border-gray-300' }}"><i class="fa-regular fa-tower-observation"></i> Well Detail</a>
@@ -158,7 +159,7 @@ $user = auth()->user();
                 </li>
             @endif
         @endif
-
+@endif
         @if (Request::is('assets*'))
             {{-- Assets Categories --}}
             <li class="me-2">

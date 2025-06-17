@@ -29,7 +29,7 @@
                 <div class="hD0sTTDgbxakubcHVW2X xCPtuxM4_gihvpPwv9bX iHPddplqYvrN6qWgvntn AqVNvLG_H6VHhym2yKMp">
                     <div>
                         <label for="employee_id" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Employee ID</label>
-                        <input type="text" name="employee_id" id="employee_id" class="_Vb9igHms0hI1PQcvp_S" required>
+                        <input type="text" name="employee_id" id="employee_id" class="custom-input" required>
                         <small class="text-sm text-gray-500 mt-1 block">
                             <i class="fa-solid fa-circle-info text-blue-500 mr-1"></i>
                             This will be used as the login username.
@@ -38,17 +38,17 @@
 
                     <div>
                         <label for="employee_name" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Employee Name</label>
-                        <input type="text" name="employee_name" id="employee_name" class="_Vb9igHms0hI1PQcvp_S" required>
+                        <input type="text" name="employee_name" id="employee_name" class="custom-input" required>
                     </div>
 
                     <div>
                         <label for="email" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Email</label>
-                        <input type="email" name="email" id="email" class="_Vb9igHms0hI1PQcvp_S">
+                        <input type="email" name="email" id="email" class="custom-input">
                     </div>
 
                     <div>
                         <label for="kode_login" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Username</label>
-                        <input type="text" name="kode_login" id="kode_login" class="_Vb9igHms0hI1PQcvp_S" required>
+                        <input type="text" name="kode_login" id="kode_login" class="custom-input" required>
                     </div>
 
                     <div>
@@ -84,7 +84,7 @@
 
                     <div>
                         <label for="level" class="TR_P65x9ie7j6uxFo_Cs _Vb9igHms0hI1PQcvp_S">Level</label>
-                        <select name="level" id="level" class="_Vb9igHms0hI1PQcvp_S" required>
+                        <select name="level" id="level" class="custom-input" required>
                             <option value="">-- Select Level --</option>
                             <option value="Supervisor">Supervisor</option>
                             <option value="Operator">Operator</option>
@@ -110,7 +110,7 @@
 
                 <div class="Q_jg_EPdNf9eDMn1mLI2 UYOSZJ1_pv3B5nt1ujCP rvdRhGyExrNYTA6euxsF SQf297smyJVNzzOO3iQL xr7CqaTHxTvDOrwAH2SW">
                     <button type="submit"
-                            class="_k0lTW0vvzboctTxDi2R t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU bg-blue-700 hover:bg-blue-400 text-white font-semibold px-4 py-2 rounded-lg w-full">
+                            class="_k0lTW0vvzboctTxDi2R t6gkcSf0Bt4MLItXvDJ_ Q_jg_EPdNf9eDMn1mLI2 Nm7xMnguzOx6J5Ao7yCU custom-btn-submit">
                         <i class="fa-solid fa-save"></i> &nbsp; Add Account
                     </button>
 
@@ -226,4 +226,69 @@
             updateProjectOptionsByLevel(this.value);
         });
     });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.getElementById('addAccountForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message,
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Optional: reset form or reload page
+                form.reset();
+                location.reload(); // kalau ingin refresh data table misalnya
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Something went wrong.',
+            });
+        }
+    })
+    .catch(error => {
+        // Handle validation error (422) atau lainnya
+        error.json().then(err => {
+            if (err.errors) {
+                let messages = Object.values(err.errors).flat().join('\n');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: messages
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: error.statusText
+                });
+            }
+        }).catch(() => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Unexpected Error',
+                text: 'Something went wrong.'
+            });
+        });
+    });
+});
 </script>

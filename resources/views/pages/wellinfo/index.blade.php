@@ -132,6 +132,88 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+<script>
+function confirmLock(wellinfoId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Once locked, this report cannot be edited unless it is unlocked again.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, lock it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/wellinfo/lock/${wellinfoId}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to lock the report.');
+                }
+                return response.json();
+            }).then(data => {
+                Swal.fire('Locked!', 'The report has been locked.', 'success')
+                    .then(() => {
+                        $('#datatable').DataTable().ajax.reload();
+                    });
+            }).catch(error => {
+                Swal.fire('Error', error.message, 'error');
+            });
+        }
+    });
+}
+
+function unlockWithCode(wellinfoId) {
+    Swal.fire({
+        title: 'Enter Access Code',
+        input: 'text',
+        inputLabel: 'Access Code',
+        inputPlaceholder: 'Enter the project access code',
+        showCancelButton: true,
+        confirmButtonText: 'Unlock',
+        cancelButtonText: 'Cancel',
+        inputAttributes: {
+            maxlength: 20,
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        preConfirm: (accessCode) => {
+            if (!accessCode) {
+                Swal.showValidationMessage('Access code cannot be empty');
+                return false;
+            }
+
+            return fetch(`/wellinfo/unlock/${wellinfoId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ kodeakses: accessCode })
+            })
+            .then(response => response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.message || 'Invalid access code.');
+                }
+                return data;
+            }))
+            .catch(error => {
+                Swal.showValidationMessage(error.message);
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('Unlocked!', 'The report has been unlocked.', 'success')
+                .then(() => {
+                    $('#datatable').DataTable().ajax.reload();
+                });
+        }
+    });
+}
+</script>
 
 
 @endsection

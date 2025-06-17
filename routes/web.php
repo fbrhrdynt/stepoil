@@ -97,7 +97,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('wellinfo')->group(function () {
         Route::get('/', [WellinfoController::class, 'index'])->name('wellinfo.index');
         Route::get('/lock/{id}', [WellinfoController::class, 'lock']);
-        Route::get('/unlock/{id}', [WellinfoController::class, 'unlock']);
+        Route::post('/unlock/{id}', [WellinfoController::class, 'unlockWithCode'])->name('wellinfo.unlock');
         Route::get('/delete/{id}', [WellinfoController::class, 'destroy']);
         Route::get('/copy-lastreport/{id}', [WellinfoController::class, 'copyLastReport']);
     });

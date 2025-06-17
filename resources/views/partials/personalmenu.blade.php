@@ -73,7 +73,7 @@ $user = auth()->user();
                             <span class="oA7zcT_42jVeFuWTXQnq">Current Report</span>
                         </a>
                     </li>
-
+@if($wellinfo->lockreport === 'NO')
                     {{-- Edit Report --}}
                     <li>
                         <a href="{{ url("projects/details/{$projectId}/{$wellinfoId}/edit-first") }}"
@@ -213,13 +213,13 @@ $user = auth()->user();
                             <span class="oA7zcT_42jVeFuWTXQnq">Personnel</span>
                         </a>
                     </li>
-
+@endif
 
 
                 @endif
             </ul>
         @endif
-
+      
         @if (Request::is('assets*'))
             <ul class="TVHgSaRh3muGJct_epr9">
                 {{-- Assets Categories --}}

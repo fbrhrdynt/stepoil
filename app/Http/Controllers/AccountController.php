@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Wellinfo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 
 class AccountController extends Controller
 {
@@ -97,40 +99,50 @@ class AccountController extends Controller
     
     public function update(Request $request, $id)
     {
-        $user = XUser::findOrFail($id);
+        try {
+            $user = XUser::findOrFail($id);
     
-        // Validasi input
-        $request->validate([
-            'employee_id' => 'required|unique:xusers,employee_id,' . $id . ',id_user',
-            'employee_name' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'kode_login' => 'required|unique:xusers,kode_login,' . $id . ',id_user',
-            'level' => 'required|in:Supervisor,Operator,Staff',
-            'id_project' => 'nullable|integer',
-            'pass_login' => 'nullable|min:6', // hanya jika ingin ubah password
-        ]);
+            $request->validate([
+                'employee_name' => 'required|string|max:255',
+                'email' => 'nullable|email',
+                'level' => 'required|in:Supervisor,Operator,Staff',
+                'id_project' => 'nullable|integer',
+                'pass_login' => 'nullable|min:6',
+            ]);
     
-        // Update data dasar
-        $user->employee_id = $request->employee_id;
-        $user->employee_name = $request->employee_name;
-        $user->email = $request->email;
-        $user->kode_login = $request->kode_login;
-        $user->level = $request->level;
-        $user->id_project = $request->id_project;
-        $user->status = $request->status ?? 'Y';
+            $user->employee_id = $request->employee_id;
+            $user->employee_name = $request->employee_name;
+            $user->email = $request->email;
+            $user->kode_login = $request->kode_login;
+            $user->level = $request->level;
+            $user->id_project = $request->id_project;
+            $user->status = $request->status ?? 'Y';
     
-        // Jika ada permintaan ubah password
-        if ($request->filled('pass_login')) {
-            $user->pass_login = bcrypt($request->pass_login);
+            if ($request->filled('pass_login')) {
+                $user->pass_login = bcrypt($request->pass_login);
+            }
+    
+            $user->save();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Account has been updated successfully.'
+            ]);
+    
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
-    
-        $user->save();
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'Account has been updated successfully.'
-        ]);
     }
+    
     
     public function toggleStatus(Request $request, $id)
     {

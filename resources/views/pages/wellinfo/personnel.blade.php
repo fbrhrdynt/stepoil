@@ -10,11 +10,34 @@
                     <h2 class="text-2xl font-semibold leading-tight">Step Oiltools Engineers</h2>
                 </div>
 
-                @if(session('success'))
-                    <div class="mb-4 text-green-600 font-medium">
-                        {{ session('success') }}
-                    </div>
-                @endif
+@if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Update Successful',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+@endif
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Close'
+            });
+        });
+    </script>
+@endif
+
+
 
                 <form action="{{ route('personnel.update', [$project_id, $wellinfo_id]) }}" method="POST">
                     @csrf
