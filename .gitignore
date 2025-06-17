@@ -3,6 +3,7 @@
 /storage/*.key
 /storage/pail
 .env
+.envhosting
 .env.backup
 .env.production
 .phpactor.json
